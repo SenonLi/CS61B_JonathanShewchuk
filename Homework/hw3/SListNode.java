@@ -13,15 +13,6 @@ class SListNode {
   Object item;
   SListNode next;
 
-  /**
-   *  SListNode() (with one parameter) constructs a list node referencing the
-   *  item "obj".
-   */
-
-  SListNode(Object obj) {
-    item = obj;
-    next = null;
-  }
 
   /**
    *  SListNode() (with two parameters) constructs a list node referencing the
@@ -33,4 +24,12 @@ class SListNode {
     this.next = next;
   }
 
+  /**
+   *  SListNode() (with one parameter) constructs a list node referencing the
+   *  item "obj".
+   */
+
+  SListNode(Object obj) {
+    this(obj, null);
+  }
 }
