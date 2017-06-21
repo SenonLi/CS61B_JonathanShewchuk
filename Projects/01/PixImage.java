@@ -21,7 +21,8 @@ public class PixImage {
    *  Define any variables associated with a PixImage object here.  These
    *  variables MUST be private.
    */
-
+    private SenPixel[][] pixels;
+    private int width, height;
 
 
 
@@ -34,6 +35,13 @@ public class PixImage {
    */
   public PixImage(int width, int height) {
     // Your solution here.
+	  pixels = new SenPixel[width][height];
+	  this.width    = width;
+	  this.height   = height;
+
+	  for (int i=0; i<width; i++)
+	  	for (int j=0; j<height; j++)
+	  		pixels[i][j] = new SenPixel();
   }
 
   /**
@@ -89,7 +97,7 @@ public class PixImage {
    */
   public short getBlue(int x, int y) {
     // Replace the following line with your solution.
-    return 0;
+      return 0;
   }
 
   /**
@@ -107,6 +115,11 @@ public class PixImage {
    */
   public void setPixel(int x, int y, short red, short green, short blue) {
     // Your solution here.
+	  if (red>=0&&red<=255 && green>=0&&green<=255 && blue>=0&&blue<=255)   {
+		  pixels[x][y].setRed(red);
+		  pixels[x][y].setGreen(green);
+		  pixels[x][y].setBlue(blue);
+	  }
   }
 
   /**
@@ -120,7 +133,15 @@ public class PixImage {
    */
   public String toString() {
     // Replace the following line with your solution.
-    return "";
+	  String catPixels = "";
+	  for(int i=0; i<width; i++)    {
+		  catPixels += "| ";
+		  for (int j=0; j<height; j++)  {
+			  catPixels = catPixels + pixels[i][j] + " | ";
+		  }
+		  catPixels += "\n";
+	  }
+	  return catPixels;
   }
 
   /**

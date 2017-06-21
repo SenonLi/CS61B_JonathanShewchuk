@@ -3,6 +3,8 @@
 *.lo
 *.o
 *.class
+*.xml
+*.iml
 
 # Precompiled Headers
 *.gch
