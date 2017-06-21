@@ -13,6 +13,7 @@ public class SenPixel {
     public String toString () { return red + ", " + green + ", " + blue; }
     public boolean equals(SenPixel other)
     {
+        if (other == null)   return false;
         return red==other.red && blue==other.blue && green==other.green;
     }
 

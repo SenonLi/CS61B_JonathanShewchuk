@@ -196,30 +196,20 @@ public class PixImage {
 	  // Replace the following line with your solution.
 	  if (numIterations <= 0) {
 		  return this;
-	  }
-	  else {
+	  }else {
 		  PixImage bluredPixImage = new PixImage(width, height);
 		  for(int row=0; row < width; row++)    {
 			  for (int col=0; col < height; col++)  {
 				  List<SenPixel> pixelArrayList = new ArrayList<SenPixel>();
-				  if(row > 0 && col > 0)
-					  pixelArrayList.add(pixels[row-1][col-1]);
-				  if(col > 0)
-					  pixelArrayList.add(pixels[row][col-1]);
-				  if(row < width - 1 && col > 0)
-					  pixelArrayList.add(pixels[row+1][col-1]);
-				  if(row > 0)
-					  pixelArrayList.add(pixels[row-1][col]);
-				  if(row < width - 1)
-					  pixelArrayList.add(pixels[row+1][col]);
-				  if(row > 0 && col < height-1)
-					  pixelArrayList.add(pixels[row-1][col+1]);
-				  if(row < width - 1 && col < height - 1)
-					  pixelArrayList.add(pixels[row+1][col+1]);
-				  if(col < height - 1)
-					  pixelArrayList.add(pixels[row][col+1]);
-				  if(true)
-					  pixelArrayList.add(pixels[row][col]);
+				  if(row > 0 && col > 0)	                pixelArrayList.add(pixels[row-1][col-1]);
+				  if(col > 0)   				            pixelArrayList.add(pixels[row][col-1]);
+				  if(row < width - 1 && col > 0)            pixelArrayList.add(pixels[row+1][col-1]);
+				  if(row > 0)					            pixelArrayList.add(pixels[row-1][col]);
+				  if(row < width - 1)			            pixelArrayList.add(pixels[row+1][col]);
+				  if(row > 0 && col < height-1)     	    pixelArrayList.add(pixels[row-1][col+1]);
+				  if(row < width - 1 && col < height - 1)   pixelArrayList.add(pixels[row+1][col+1]);
+				  if(col < height - 1)      				pixelArrayList.add(pixels[row][col+1]);
+				  if(true)              				    pixelArrayList.add(pixels[row][col]);
 
 				  bluredPixImage.pixels[row][col] = getAveragedPixel(pixelArrayList);
 			  }
@@ -270,6 +260,8 @@ public class PixImage {
    */
   public PixImage sobelEdges() {
     // Replace the following line with your solution.
+
+
     return this;
     // Don't forget to use the method mag2gray() above to convert energies to
     // pixel intensities.
