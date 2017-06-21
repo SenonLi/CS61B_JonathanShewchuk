@@ -1,5 +1,8 @@
 /* PixImage.java */
 
+import java.util.List;      // interface for ArrayList
+import java.util.ArrayList; // for getAveragedPixel
+
 /**
  *  The PixImage class represents an image, which is a rectangular grid of
  *  color pixels.  Each pixel has red, green, and blue intensities in the range
@@ -51,7 +54,7 @@ public class PixImage {
    */
   public int getWidth() {
     // Replace the following line with your solution.
-    return 1;
+    return width;
   }
 
   /**
@@ -61,7 +64,7 @@ public class PixImage {
    */
   public int getHeight() {
     // Replace the following line with your solution.
-    return 1;
+    return height;
   }
 
   /**
@@ -73,7 +76,7 @@ public class PixImage {
    */
   public short getRed(int x, int y) {
     // Replace the following line with your solution.
-    return 0;
+	  return pixels[x][y].getRed();
   }
 
   /**
@@ -85,7 +88,7 @@ public class PixImage {
    */
   public short getGreen(int x, int y) {
     // Replace the following line with your solution.
-    return 0;
+	  return pixels[x][y].getGreen();
   }
 
   /**
@@ -97,7 +100,7 @@ public class PixImage {
    */
   public short getBlue(int x, int y) {
     // Replace the following line with your solution.
-      return 0;
+	  return pixels[x][y].getBlue();
   }
 
   /**
@@ -144,7 +147,23 @@ public class PixImage {
 	  return catPixels;
   }
 
-  /**
+	public SenPixel getAveragedPixel(List<SenPixel> pixelList)
+	{
+		SenPixel averagedPixel = new SenPixel();
+		for(SenPixel i: pixelList)
+		{
+			averagedPixel.addToRed(i.getRed());
+			averagedPixel.addToGreen(i.getGreen());
+			averagedPixel.addToBlue(i.getBlue());
+		}
+		averagedPixel.setRed  (averagedPixel.getRed()     /   pixelList.size());
+		averagedPixel.setGreen(averagedPixel.getGreen()   /   pixelList.size());
+		averagedPixel.setBlue (averagedPixel.getBlue()    /   pixelList.size());
+
+		return averagedPixel;
+	}
+
+	/**
    * boxBlur() returns a blurred version of "this" PixImage.
    *
    * If numIterations == 1, each pixel in the output PixImage is assigned
@@ -174,8 +193,39 @@ public class PixImage {
    * @return a blurred version of "this" PixImage.
    */
   public PixImage boxBlur(int numIterations) {
-    // Replace the following line with your solution.
-    return this;
+	  // Replace the following line with your solution.
+	  if (numIterations <= 0) {
+		  return this;
+	  }
+	  else {
+		  PixImage bluredPixImage = new PixImage(width, height);
+		  for(int row=0; row < width; row++)    {
+			  for (int col=0; col < height; col++)  {
+				  List<SenPixel> pixelArrayList = new ArrayList<SenPixel>();
+				  if(row > 0 && col > 0)
+					  pixelArrayList.add(pixels[row-1][col-1]);
+				  if(col > 0)
+					  pixelArrayList.add(pixels[row][col-1]);
+				  if(row < width - 1 && col > 0)
+					  pixelArrayList.add(pixels[row+1][col-1]);
+				  if(row > 0)
+					  pixelArrayList.add(pixels[row-1][col]);
+				  if(row < width - 1)
+					  pixelArrayList.add(pixels[row+1][col]);
+				  if(row > 0 && col < height-1)
+					  pixelArrayList.add(pixels[row-1][col+1]);
+				  if(row < width - 1 && col < height - 1)
+					  pixelArrayList.add(pixels[row+1][col+1]);
+				  if(col < height - 1)
+					  pixelArrayList.add(pixels[row][col+1]);
+				  if(true)
+					  pixelArrayList.add(pixels[row][col]);
+
+				  bluredPixImage.pixels[row][col] = getAveragedPixel(pixelArrayList);
+			  }
+		  }
+		  return bluredPixImage.boxBlur(numIterations - 1);
+	  }
   }
 
   /**

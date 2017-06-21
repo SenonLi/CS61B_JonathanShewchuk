@@ -11,8 +11,20 @@ public class SenPixel {
         blue    = (short) b;
     }
     public String toString () { return red + ", " + green + ", " + blue; }
+    public boolean equals(SenPixel other)
+    {
+        return red==other.red && blue==other.blue && green==other.green;
+    }
+
     public void setRed(int r)   { red = (short) r;}
     public void setGreen(int g) { green = (short) g;}
     public void setBlue(int b)  { blue = (short) b;}
 
+    public short getRed()   { return red;}
+    public short getGreen() { return green;}
+    public short getBlue()  { return blue;}
+
+    public void addToRed(short addNum)  { red   += addNum; }
+    public void addToGreen(short addNum){ green += addNum; }
+    public void addToBlue(short addNum) { blue  += addNum; }
 }
