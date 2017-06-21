@@ -25,7 +25,8 @@ public class PixImage {
    *  variables MUST be private.
    */
     private SenPixel[][] pixels;
-    private int width, height;
+	private SenPixel[][] mirrBorPixRefs;
+	private int width, height;
 
 
 
@@ -147,7 +148,7 @@ public class PixImage {
 	  return catPixels;
   }
 
-	public SenPixel getAveragedPixel(List<SenPixel> pixelList)
+	public static SenPixel getAveragedPixel(List<SenPixel> pixelList)
 	{
 		SenPixel averagedPixel = new SenPixel();
 		for(SenPixel i: pixelList)
@@ -231,17 +232,75 @@ public class PixImage {
    * @return the intensity of the output pixel.
    */
   private static short mag2gray(long mag) {
+  	/**   Sen Tip:
+     *       range of mag:       possible from 0 to 6242400, valid from 5080 to 6242400
+     *       range of intensity: possible from -256 to 213,  valid from 0 to 213
+     */
     short intensity = (short) (30.0 * Math.log(1.0 + (double) mag) - 256.0);
 
     // Make sure the returned intensity is in the range 0...255, regardless of
     // the input value.
     if (intensity < 0) {
-      intensity = 0;
+        intensity = 0;
     } else if (intensity > 255) {
-      intensity = 255;
+	    System.err.println("intensity of mag2gray going beyond 255, == " + intensity);
+        intensity = 255;
     }
     return intensity;
   }
+
+	private void generateMirrorBorderPixelsReferrences() {
+		mirrBorPixRefs = new SenPixel[width+2][height+2];
+		for(int i=0; i < width; i++)
+			for(int j=0; j < height; j++)
+				mirrBorPixRefs[i+1][j+1] = pixels[i][j];
+
+		mirrBorPixRefs[0][0]                = pixels[0][0];
+		mirrBorPixRefs[width+1][0]          = pixels[width-1][0];
+		mirrBorPixRefs[0][height+1]         = pixels[0][height-1];
+		mirrBorPixRefs[width+1][height+1]   = pixels[width-1][height-1];
+
+		for(int i=1; i<width+1; i++)	mirrBorPixRefs[i][0] = pixels[i-1][0];
+		for(int i=1; i<width+1; i++)	mirrBorPixRefs[i][height+1] = pixels[i-1][height-1];
+		for(int i=1; i<height+1; i++)	mirrBorPixRefs[0][i] = pixels[0][i-1];
+		for(int i=1; i<height+1; i++)	mirrBorPixRefs[width+1][i] = pixels[width-1][i-1];
+	}
+
+	private static SenPixel getSobelGradientPixel(int[][] matA, SenPixel[][] sudokuPixelMat)    {
+		int sumRed = 0, sumGreen = 0, sumBlue = 0;
+		for(int col=0; col<3; col++)	{
+			for(int row=0; row<3; row++)	{
+				sumRed      = sumRed    + matA[col][row] * sudokuPixelMat[col][row].getRed();
+				sumGreen    = sumGreen  + matA[col][row] * sudokuPixelMat[col][row].getGreen();
+				sumBlue     = sumBlue   + matA[col][row] * sudokuPixelMat[col][row].getBlue();
+			}
+		}
+		SenPixel gradient = new SenPixel(sumRed, sumGreen, sumBlue);
+		return gradient;
+	}
+
+	public int[][] getSobelEnergyMagnitudeMatrix() {
+		int[][] energyMagMat = new int[width][height];
+
+		for(int col=1; col<=width; col++) {
+			for(int row=1; row<=height; row++) {
+				int[][] matAx = new int[][]{    {1,0,-1},   {2,0,-2},   {1,0,-1}};
+				int[][] matAy = new int[][]{    {1,2,1},    {0,0,0},    {-1,-2,-1}};
+
+				SenPixel[][] sudokuPixelMatrix = new SenPixel[][]  {
+					{mirrBorPixRefs[col-1][row-1],  mirrBorPixRefs[col][row-1], mirrBorPixRefs[col+1][row-1]},
+					{mirrBorPixRefs[col-1][row],    mirrBorPixRefs[col][row],   mirrBorPixRefs[col+1][row]},
+					{mirrBorPixRefs[col-1][row+1],  mirrBorPixRefs[col][row+1], mirrBorPixRefs[col+1][row+1]}
+				};
+
+				SenPixel gX = getSobelGradientPixel(matAx, sudokuPixelMatrix);
+				SenPixel gY = getSobelGradientPixel(matAy, sudokuPixelMatrix);
+
+				energyMagMat[col-1][row-1] = gX.getSquareSum() + gY.getSquareSum();
+			}
+		}
+		return energyMagMat;
+	}
 
   /**
    * sobelEdges() applies the Sobel operator, identifying edges in "this"
@@ -259,12 +318,22 @@ public class PixImage {
    * Whiter pixels represent stronger edges.
    */
   public PixImage sobelEdges() {
-    // Replace the following line with your solution.
+	  PixImage sobelEdgedImage = new PixImage(width, height);
 
+	  generateMirrorBorderPixelsReferrences();
+	  int[][] energyMaganitudeMatrix = getSobelEnergyMagnitudeMatrix();
 
-    return this;
-    // Don't forget to use the method mag2gray() above to convert energies to
-    // pixel intensities.
+	  for(int i=0; i<width; i++)
+	  {
+		  for(int j=0; j<height; j++)
+		  {
+			  int grayIntensity = mag2gray(energyMaganitudeMatrix[i][j]);
+			  sobelEdgedImage.pixels[i][j].setRed(grayIntensity);
+			  sobelEdgedImage.pixels[i][j].setGreen(grayIntensity);
+			  sobelEdgedImage.pixels[i][j].setBlue(grayIntensity);
+		  }
+	  }
+	  return sobelEdgedImage;
   }
 
 

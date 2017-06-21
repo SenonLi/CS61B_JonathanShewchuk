@@ -10,9 +10,13 @@ public class SenPixel {
         green   = (short) g;
         blue    = (short) b;
     }
-    public String toString () { return red + ", " + green + ", " + blue; }
-    public boolean equals(SenPixel other)
+
+    public int getSquareSum()
     {
+        return red*red + blue*blue + green*green;
+    }
+    public String toString () { return red + ", " + green + ", " + blue; }
+    public boolean equals(SenPixel other)    {
         if (other == null)   return false;
         return red==other.red && blue==other.blue && green==other.green;
     }
@@ -28,4 +32,11 @@ public class SenPixel {
     public void addToRed(short addNum)  { red   += addNum; }
     public void addToGreen(short addNum){ green += addNum; }
     public void addToBlue(short addNum) { blue  += addNum; }
+
+    public static void main(String[] args)  {
+        char a = 255, b = 255;
+        System.out.println("a = " + a + ", \t b = " + b);
+        long c = (a * a + b * b);
+        System.out.println("c = " + c);
+    }
 }
