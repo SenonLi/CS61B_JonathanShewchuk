@@ -36,14 +36,14 @@ public class RunIterator implements Iterator {
    *  Define any variables associated with a RunIterator object here.
    *  These variables MUST be private.
    */
-
+    SenDListNode curRunNode;
 
 
 
   /**
    *  RunIterator() constructs a new iterator starting with a specified run.
    *
-   *  @param node the run where this iterator starts.
+   *  @param beginNode the run where this iterator starts.
    */
   // Unlike all the other methods we have asked you to write, the RunIterator()
   // constructor does not have a predefined signature, because no outside
@@ -54,8 +54,9 @@ public class RunIterator implements Iterator {
   // constructor that you want so that your RunLengthEncoding.iterator()
   // implementation can construct a RunIterator that points to the first run of
   // the encoding.
-  RunIterator() {
+  RunIterator(SenDListNode beginNode) {
     // Your solution here.  You may add parameters to the method signature.
+      curRunNode = beginNode;
   }
 
   /**
@@ -66,7 +67,7 @@ public class RunIterator implements Iterator {
    */
   public boolean hasNext() {
     // Replace the following line with your solution.
-    return false;
+    return curRunNode.next != null ;
   }
 
   /**
