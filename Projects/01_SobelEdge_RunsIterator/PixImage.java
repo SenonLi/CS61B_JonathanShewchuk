@@ -43,9 +43,9 @@ public class PixImage {
 	  this.width    = width;
 	  this.height   = height;
 
-	  for (int i=0; i<width; i++)
-	  	for (int j=0; j<height; j++)
-	  		pixels[i][j] = new SenPixel();
+	  for (int row=0; row<height; row++)
+	  	for (int col=0; col<width; col++)
+	  		pixels[col][row] = new SenPixel();
   }
 
   /**
@@ -126,6 +126,8 @@ public class PixImage {
 	  }
   }
 
+  public SenPixel getPixel(int col, int row)  { return pixels[col][row];    }
+
   /**
    * toString() returns a String representation of this PixImage.
    *
@@ -138,10 +140,10 @@ public class PixImage {
   public String toString() {
     // Replace the following line with your solution.
 	  String catPixels = "";
-	  for(int i=0; i<width; i++)    {
+	  for(int col=0; col<width; col++)    {
 		  catPixels += "| ";
-		  for (int j=0; j<height; j++)  {
-			  catPixels = catPixels + pixels[i][j] + " | ";
+		  for (int row=0; row<height; row++)  {
+			  catPixels = catPixels + pixels[col][row] + " | ";
 		  }
 		  catPixels += "\n";
 	  }
@@ -151,11 +153,11 @@ public class PixImage {
 	public static SenPixel getAveragedPixel(List<SenPixel> pixelList)
 	{
 		SenPixel averagedPixel = new SenPixel();
-		for(SenPixel i: pixelList)
+		for(SenPixel row: pixelList)
 		{
-			averagedPixel.addToRed(i.getRed());
-			averagedPixel.addToGreen(i.getGreen());
-			averagedPixel.addToBlue(i.getBlue());
+			averagedPixel.addToRed(row.getRed());
+			averagedPixel.addToGreen(row.getGreen());
+			averagedPixel.addToBlue(row.getBlue());
 		}
 		averagedPixel.setRed  (averagedPixel.getRed()     /   pixelList.size());
 		averagedPixel.setGreen(averagedPixel.getGreen()   /   pixelList.size());
@@ -199,20 +201,20 @@ public class PixImage {
 		  return this;
 	  }else {
 		  PixImage bluredPixImage = new PixImage(width, height);
-		  for(int row=0; row < width; row++)    {
-			  for (int col=0; col < height; col++)  {
+		  for(int row=0; row < height; row++)    {
+			  for (int col=0; col < width; col++)  {
 				  List<SenPixel> pixelArrayList = new ArrayList<SenPixel>();
-				  if(row > 0 && col > 0)	                pixelArrayList.add(pixels[row-1][col-1]);
-				  if(col > 0)   				            pixelArrayList.add(pixels[row][col-1]);
-				  if(row < width - 1 && col > 0)            pixelArrayList.add(pixels[row+1][col-1]);
-				  if(row > 0)					            pixelArrayList.add(pixels[row-1][col]);
-				  if(row < width - 1)			            pixelArrayList.add(pixels[row+1][col]);
-				  if(row > 0 && col < height-1)     	    pixelArrayList.add(pixels[row-1][col+1]);
-				  if(row < width - 1 && col < height - 1)   pixelArrayList.add(pixels[row+1][col+1]);
-				  if(col < height - 1)      				pixelArrayList.add(pixels[row][col+1]);
-				  if(true)              				    pixelArrayList.add(pixels[row][col]);
+				  if(col > 0 && row > 0)	                pixelArrayList.add(pixels[col-1][row-1]);
+				  if(row > 0)   				            pixelArrayList.add(pixels[col][row-1]);
+				  if(col < width - 1 && row > 0)            pixelArrayList.add(pixels[col+1][row-1]);
+				  if(col > 0)					            pixelArrayList.add(pixels[col-1][row]);
+				  if(col < width - 1)			            pixelArrayList.add(pixels[col+1][row]);
+				  if(col > 0 && row < height-1)     	    pixelArrayList.add(pixels[col-1][row+1]);
+				  if(col < width - 1 && row < height - 1)   pixelArrayList.add(pixels[col+1][row+1]);
+				  if(row < height - 1)      				pixelArrayList.add(pixels[col][row+1]);
+				  if(true)              				    pixelArrayList.add(pixels[col][row]);
 
-				  bluredPixImage.pixels[row][col] = getAveragedPixel(pixelArrayList);
+				  bluredPixImage.pixels[col][row] = getAveragedPixel(pixelArrayList);
 			  }
 		  }
 		  return bluredPixImage.boxBlur(numIterations - 1);
@@ -251,25 +253,25 @@ public class PixImage {
 
 	private void generateMirrorBorderPixelsReferrences() {
 		mirrBorPixRefs = new SenPixel[width+2][height+2];
-		for(int i=0; i < width; i++)
-			for(int j=0; j < height; j++)
-				mirrBorPixRefs[i+1][j+1] = pixels[i][j];
+		for(int row=0; row < height; row++)
+			for(int col=0; col < width; col++)
+				mirrBorPixRefs[col+1][row+1] = pixels[col][row];
 
 		mirrBorPixRefs[0][0]                = pixels[0][0];
 		mirrBorPixRefs[width+1][0]          = pixels[width-1][0];
 		mirrBorPixRefs[0][height+1]         = pixels[0][height-1];
 		mirrBorPixRefs[width+1][height+1]   = pixels[width-1][height-1];
 
-		for(int i=1; i<width+1; i++)	mirrBorPixRefs[i][0] = pixels[i-1][0];
-		for(int i=1; i<width+1; i++)	mirrBorPixRefs[i][height+1] = pixels[i-1][height-1];
-		for(int i=1; i<height+1; i++)	mirrBorPixRefs[0][i] = pixels[0][i-1];
-		for(int i=1; i<height+1; i++)	mirrBorPixRefs[width+1][i] = pixels[width-1][i-1];
+		for(int col=1; col<width+1; col++)	mirrBorPixRefs[col][0] = pixels[col-1][0];
+		for(int col=1; col<width+1; col++)	mirrBorPixRefs[col][height+1] = pixels[col-1][height-1];
+		for(int row=1; row<height+1; row++)	mirrBorPixRefs[0][row] = pixels[0][row-1];
+		for(int row=1; row<height+1; row++)	mirrBorPixRefs[width+1][row] = pixels[width-1][row-1];
 	}
 
 	private static SenPixel getSobelGradientPixel(int[][] matA, SenPixel[][] sudokuPixelMat)    {
 		int sumRed = 0, sumGreen = 0, sumBlue = 0;
-		for(int col=0; col<3; col++)	{
-			for(int row=0; row<3; row++)	{
+		for(int row=0; row<3; row++)	{
+			for(int col=0; col<3; col++)	{
 				sumRed      = sumRed    + matA[col][row] * sudokuPixelMat[col][row].getRed();
 				sumGreen    = sumGreen  + matA[col][row] * sudokuPixelMat[col][row].getGreen();
 				sumBlue     = sumBlue   + matA[col][row] * sudokuPixelMat[col][row].getBlue();
@@ -282,8 +284,8 @@ public class PixImage {
 	public int[][] getSobelEnergyMagnitudeMatrix() {
 		int[][] energyMagMat = new int[width][height];
 
-		for(int col=1; col<=width; col++) {
-			for(int row=1; row<=height; row++) {
+		for(int row=1; row<=height; row++) {
+			for(int col=1; col<=width; col++) {
 				int[][] matAx = new int[][]{    {1,0,-1},   {2,0,-2},   {1,0,-1}};
 				int[][] matAy = new int[][]{    {1,2,1},    {0,0,0},    {-1,-2,-1}};
 
@@ -323,14 +325,14 @@ public class PixImage {
 	  generateMirrorBorderPixelsReferrences();
 	  int[][] energyMaganitudeMatrix = getSobelEnergyMagnitudeMatrix();
 
-	  for(int i=0; i<width; i++)
+	  for(int row=0; row<height; row++)
 	  {
-		  for(int j=0; j<height; j++)
+		  for(int col=0; col<width; col++)
 		  {
-			  int grayIntensity = mag2gray(energyMaganitudeMatrix[i][j]);
-			  sobelEdgedImage.pixels[i][j].setRed(grayIntensity);
-			  sobelEdgedImage.pixels[i][j].setGreen(grayIntensity);
-			  sobelEdgedImage.pixels[i][j].setBlue(grayIntensity);
+			  int grayIntensity = mag2gray(energyMaganitudeMatrix[col][row]);
+			  sobelEdgedImage.pixels[col][row].setRed(grayIntensity);
+			  sobelEdgedImage.pixels[col][row].setGreen(grayIntensity);
+			  sobelEdgedImage.pixels[col][row].setBlue(grayIntensity);
 		  }
 	  }
 	  return sobelEdgedImage;
@@ -372,10 +374,10 @@ public class PixImage {
     int height = pixels[0].length;
     PixImage image = new PixImage(width, height);
 
-    for (int x = 0; x < width; x++) {
-      for (int y = 0; y < height; y++) {
-        image.setPixel(x, y, (short) pixels[x][y], (short) pixels[x][y],
-                       (short) pixels[x][y]);
+    for (int row = 0; row < height; row++) {
+      for (int col = 0; col < width; col++) {
+        image.setPixel(col, row, (short) pixels[col][row], (short) pixels[col][row],
+                       (short) pixels[col][row]);
       }
     }
 
@@ -383,7 +385,7 @@ public class PixImage {
   }
 
   /**
-   * equals() checks whether two images are the same, i.e. have the same
+   * equals() checks whether two images are the same, row.e. have the same
    * dimensions and pixels.
    *
    * @param image a PixImage to compare with "this" PixImage.

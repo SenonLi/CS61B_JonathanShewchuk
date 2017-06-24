@@ -29,9 +29,8 @@ public class RunLengthEncoding implements Iterable {
    *  Define any variables associated with a RunLengthEncoding object here.
    *  These variables MUST be private.
    */
-
-
-
+  private SenDList pixelRunsDList;
+  private int width, height;
 
   /**
    *  The following methods are required for Part II.
@@ -48,6 +47,8 @@ public class RunLengthEncoding implements Iterable {
 
   public RunLengthEncoding(int width, int height) {
     // Your solution here.
+      this(width, height, new int[]{0}, new int[]{0}, new int[]{0},
+          new int[]{width * height});
   }
 
   /**
@@ -73,7 +74,15 @@ public class RunLengthEncoding implements Iterable {
 
   public RunLengthEncoding(int width, int height, int[] red, int[] green,
                            int[] blue, int[] runLengths) {
-    // Your solution here.
+      // Your solution here.
+      this.width = width;
+      this.height = height;
+
+      pixelRunsDList = new SenDList();
+      for(int i=0; i < runLengths.length; i++)  {
+          SenPixel runPixel = new SenPixel(red[i], green[i], blue[i], runLengths[i]);
+          pixelRunsDList.insertBack(runPixel);
+      }
   }
 
   /**
@@ -85,7 +94,7 @@ public class RunLengthEncoding implements Iterable {
 
   public int getWidth() {
     // Replace the following line with your solution.
-    return 1;
+    return width;
   }
 
   /**
@@ -96,7 +105,7 @@ public class RunLengthEncoding implements Iterable {
    */
   public int getHeight() {
     // Replace the following line with your solution.
-    return 1;
+    return height;
   }
 
   /**
@@ -107,10 +116,10 @@ public class RunLengthEncoding implements Iterable {
    *  RunLengthEncoding.
    */
   public RunIterator iterator() {
-    // Replace the following line with your solution.
-    return null;
-    // You'll want to construct a new RunIterator, but first you'll need to
-    // write a constructor in the RunIterator class.
+      // Replace the following line with your solution.
+      return new RunIterator(pixelRunsDList.head);
+      // You'll want to construct a new RunIterator, but first you'll need to
+      // write a constructor in the RunIterator class.
   }
 
   /**
@@ -120,8 +129,24 @@ public class RunLengthEncoding implements Iterable {
    *  @return the PixImage that this RunLengthEncoding encodes.
    */
   public PixImage toPixImage() {
-    // Replace the following line with your solution.
-    return new PixImage(1, 1);
+      // Replace the following line with your solution.
+      PixImage image = new PixImage(width, height);
+      RunIterator it = iterator();
+      int col = 0, row = 0;
+      while(it.hasNext()) {
+          int[] runPixelInfoArray = it.next();
+          int runLength = runPixelInfoArray[0];
+          short r = (short)runPixelInfoArray[1];
+          short g = (short)runPixelInfoArray[2];
+          short b = (short)runPixelInfoArray[3];
+          for(int i=0; i<runLength; i++) {
+              image.setPixel(col, row, r, g, b);
+              col++;
+              if (col == width) { col = 0; row++;  }
+          } 
+      }
+
+      return image;
   }
 
   /**
@@ -135,7 +160,22 @@ public class RunLengthEncoding implements Iterable {
    */
   public String toString() {
     // Replace the following line with your solution.
-    return "";
+      String rleString = "RLE: " + pixelRunsDList.size + " runs\n";
+
+      SenPixel nodePixel;
+      SenDListNode curDListNode = pixelRunsDList.head;
+      int totalRunsCount = 0;
+      while(curDListNode != null) {
+          totalRunsCount++;
+          nodePixel = (SenPixel)curDListNode.item;
+          rleString += "\trunsCount " + totalRunsCount + " :\t"
+                        + "runLength :\t" + nodePixel.getRunLengthEncodingCount()
+                        + "\t" + nodePixel + "\n";
+
+          curDListNode = curDListNode.next;
+      }
+
+      return rleString;
   }
 
 
@@ -153,9 +193,32 @@ public class RunLengthEncoding implements Iterable {
    *  @param image is the PixImage to run-length encode.
    */
   public RunLengthEncoding(PixImage image) {
-    // Your solution here, but you should probably leave the following line
-    // at the end.
-    check();
+      width = image.getWidth();
+      height = image.getHeight();
+      pixelRunsDList = new SenDList();
+
+      int curRunLength = 0;
+      SenPixel basePixel = image.getPixel(0,0);
+//      for (int col=0; col<width; col++) {
+//          for (int row=0; row<height; row++)  {
+      for (int row=0; row<height; row++) {
+          for (int col=0; col<width; col++)  {
+
+              if(basePixel.equals(image.getPixel(col, row)))  {
+                  curRunLength++;
+              }else {
+                  pixelRunsDList.insertBack(new SenPixel(basePixel, curRunLength));
+                  curRunLength = 1;
+                  basePixel = image.getPixel(col, row);
+              }
+          }
+      }
+      // insert the last runs
+      pixelRunsDList.insertBack(new SenPixel(basePixel, curRunLength));
+
+      // Your solution here, but you should probably leave the following line
+      // at the end.
+      check();
   }
 
   /**
@@ -164,7 +227,30 @@ public class RunLengthEncoding implements Iterable {
    *  all run lengths does not equal the number of pixels in the image.
    */
   public void check() {
-    // Your solution here.
+      // Your solution here.
+      int totalRunsLength = 0;
+      int leftR = -1, leftG = -1, leftB = -1;
+      RunIterator it = iterator();
+
+      int runsCount = 0;
+      while (it.hasNext()) {
+          int[] rightRun = it.next();
+          runsCount++;
+          totalRunsLength += rightRun[0];
+          if (leftR == rightRun[1] && leftG == rightRun[2] && leftB == rightRun[3]) {
+              System.err.println("The " + runsCount + " Run and its next have the same RGB intensities");
+              System.err.println("Run : \n " + this);
+              return;
+          }
+          leftR = rightRun[1];
+          leftG = rightRun[2];
+          leftB = rightRun[3];
+      }
+      if (totalRunsLength != width * height) {
+          System.err.println("The sum of all run lengths is not equal to the number of pixels in the image.");
+          System.err.println("totalRunsLength = " + totalRunsLength + ",   width = " + width + ",    height" + height);
+          System.err.println("rle.this = \n" + this);
+      }
   }
 
 
@@ -186,9 +272,130 @@ public class RunLengthEncoding implements Iterable {
    *  @param blue the new blue intensity to store at coordinate (x, y).
    */
   public void setPixel(int x, int y, short red, short green, short blue) {
-    // Your solution here, but you should probably leave the following line
-    //   at the end.
-    check();
+      // Your solution here, but you should probably leave the following line at the end.
+      SenDListNode curRunNode = pixelRunsDList.head;
+      if (curRunNode == null)   {
+          System.out.println("Error, no valid image info in this rle!!");
+          return;
+      }
+      int runLengthsTotal = ((SenPixel)curRunNode.item).getRunLengthEncodingCount();
+      int pixelPositionInLength = y * width + x + 1;
+
+      /*** 1. Find which runNode the targetPixel stays, and give it to curRunNode  *******/
+       while(runLengthsTotal < pixelPositionInLength) {
+           if(curRunNode.next != null)   {
+               runLengthsTotal += ((SenPixel)curRunNode.next.item).getRunLengthEncodingCount();
+               curRunNode = curRunNode.next;
+           }else {
+               System.err.println("Error, cann't find a valid pixel in this rleImage!!");
+               System.err.println("x = " + x + ",   y = " + y + ",   pixelPositionInLength = " + pixelPositionInLength);
+               System.err.println("runLengthsTotal = " + runLengthsTotal);
+               break;
+           }
+      }
+
+      /** 2. If the new pixelColor is the same, no need to change pixelRunsDList ***/
+      SenPixel targetPixel = new SenPixel(red, green, blue);
+      if (targetPixel.equals(curRunNode.item)) {
+          return;
+      }
+      /** 3. Find out the neiborsInfo of the target pixel    **********************/
+      boolean hasPrevRunNode = (curRunNode.prev != null);
+      boolean hasNextRunNode = (curRunNode.next != null);
+      boolean samePixelAsPrevRunNode = false;
+      boolean samePixelAsNextRunNode = false;
+      int prevNodeRunLength = -1, nextNodeRunLength = -1;
+      if(hasPrevRunNode) {
+          samePixelAsPrevRunNode = targetPixel.equals(curRunNode.prev.item);
+          prevNodeRunLength = ((SenPixel)curRunNode.prev.item).getRunLengthEncodingCount();
+      }
+      if(hasNextRunNode) {
+          samePixelAsNextRunNode = targetPixel.equals(curRunNode.next.item);
+          nextNodeRunLength = ((SenPixel)curRunNode.next.item).getRunLengthEncodingCount();
+      }
+      int curNodeRunLength = ((SenPixel)curRunNode.item).getRunLengthEncodingCount();
+
+      /** 4. Seperate: if the targetPixel itself represets a single runNode ******/
+      if (curNodeRunLength == 1) {
+          if (samePixelAsPrevRunNode && samePixelAsNextRunNode) {
+              /** Combine THREE nodes as curRunNode, then setPixel **/
+              ((SenPixel)curRunNode.prev.item).setRunLengthEncodingCount(
+                  prevNodeRunLength + 1 + nextNodeRunLength
+              );
+              curRunNode.prev.next = curRunNode.next.next;
+              pixelRunsDList.remove(curRunNode.next);
+              pixelRunsDList.remove(curRunNode);
+          }else if (!samePixelAsPrevRunNode && !samePixelAsNextRunNode) {
+              /** Combine ZERO nodes, Still single, setPixel directly **/
+              targetPixel.setRunLengthEncodingCount(1);
+              curRunNode.item = targetPixel;
+          }else {
+              if(samePixelAsPrevRunNode)    {
+                  /** Need to combine curRunNode.prev and curRunNode **/
+                  ((SenPixel)curRunNode.prev.item).setRunLengthEncodingCount(
+                      prevNodeRunLength + 1
+                  );
+                  curRunNode.prev.next = curRunNode.next;
+                  pixelRunsDList.remove(curRunNode);
+              }else if (samePixelAsNextRunNode) {
+                  /** Need to combine curRunNode.next and curRunNode **/
+                  ((SenPixel)curRunNode.next.item).setRunLengthEncodingCount(
+                      nextNodeRunLength + 1
+                  );
+                  curRunNode.next.prev = curRunNode.prev;
+                  pixelRunsDList.remove(curRunNode);
+              }
+          }
+          return;
+      }else
+
+      /** 5. Combine at most TWO nodes, either with Prev or Next *************/
+      if (pixelPositionInLength == runLengthsTotal - curNodeRunLength + 1)  {
+          /** The targetPixel is at the Beginning of a runNode **/
+          ((SenPixel)curRunNode.item).setRunLengthEncodingCount(
+              curNodeRunLength - 1
+          );
+
+          if(samePixelAsPrevRunNode)    {
+              /** targetPixel will be added into curRunNode.prev **/
+              ((SenPixel)curRunNode.prev.item).setRunLengthEncodingCount(
+                  prevNodeRunLength + 1
+              );
+          }else { // targetPixel is at the beginning of curRunNode
+              /** targetPixel will be a newRunNode before curRunNode **/
+              targetPixel.setRunLengthEncodingCount(1);
+              pixelRunsDList.insertBefore(curRunNode, targetPixel);
+         }
+      }else if (pixelPositionInLength == runLengthsTotal)  {
+          /** The targetPixel is at the End of a runNode **/
+          ((SenPixel)curRunNode.item).setRunLengthEncodingCount(
+              curNodeRunLength - 1
+          );
+
+          if(samePixelAsNextRunNode)    {
+              /** targetPixel will be added into curRunNode.next **/
+              ((SenPixel)curRunNode.next.item).setRunLengthEncodingCount(
+                  nextNodeRunLength + 1
+              );
+          }else { // targetPixel is at the beginning of curRunNode
+              /** targetPixel will be a newRunNode before curRunNode **/
+              targetPixel.setRunLengthEncodingCount(1);
+              pixelRunsDList.insertAfter(curRunNode, targetPixel);
+          }
+      }else {
+          /** The targetPixel is in the middle of a runNode **/
+          SenPixel curOldPixel = (SenPixel)curRunNode.item;
+          int curNodeHeadPixelPositionInLength = runLengthsTotal - curNodeRunLength + 1;
+          int leftLength = pixelPositionInLength - curNodeHeadPixelPositionInLength;
+          int rightLength = runLengthsTotal - pixelPositionInLength;
+
+          pixelRunsDList.insertBefore(curRunNode, new SenPixel(curOldPixel, leftLength));
+          pixelRunsDList.insertAfter(curRunNode, new SenPixel(curOldPixel, rightLength));
+
+          targetPixel.setRunLengthEncodingCount(1);
+          curRunNode.item = targetPixel;
+      }
+      return;
   }
 
 
@@ -249,9 +456,9 @@ public class RunLengthEncoding implements Iterable {
    */
   private static void setAndCheckRLE(RunLengthEncoding rle,
                                      int x, int y, int intensity) {
-    rle.setPixel(x, y,
+      rle.setPixel(x, y,
                  (short) intensity, (short) intensity, (short) intensity);
-    rle.check();
+      rle.check();
   }
 
   /**
@@ -287,13 +494,18 @@ public class RunLengthEncoding implements Iterable {
                                                     { 1, 4, 7 },
                                                     { 2, 5, 8 } })),
            */
-           "Setting RLE1[0][0] = 42 fails.");
+           "\n\n\nSetting RLE1[0][0] = 42 fails.\nimage1: \n"
+               + image1 + "\nrle1.toPixImage() : \n" + rle1.toPixImage() + "\n\n\n\n");
 
     System.out.println("Testing setPixel() on a 3x3 encoding.");
     setAndCheckRLE(rle1, 1, 0, 42);
     image1.setPixel(1, 0, (short) 42, (short) 42, (short) 42);
     doTest(rle1.toPixImage().equals(image1),
-           "Setting RLE1[1][0] = 42 fails.");
+           "Setting RLE1[1][0] = 42 fails. \nimage1: \n"
+          + image1 + "\nrle1.toPixImage() : \n" + rle1.toPixImage() + "\n\n\n\n");
+
+//      System.err.println("\n\n\nSetting check RLE1[1][0] = 42.\nimage1: \n"
+//          + image1 + "\nrle1.toPixImage() : \n" + rle1.toPixImage() + "\n\n\n\n");
 
     System.out.println("Testing setPixel() on a 3x3 encoding.");
     setAndCheckRLE(rle1, 0, 1, 2);
@@ -301,11 +513,16 @@ public class RunLengthEncoding implements Iterable {
     doTest(rle1.toPixImage().equals(image1),
            "Setting RLE1[0][1] = 2 fails.");
 
+//      System.err.println("\n\n\nSetting check RLE1[0][1] = 2.\nimage1: \n"
+//          + image1 + "\nrle1.toPixImage() : \n" + rle1.toPixImage() + "\n\n\n\n");
+
     System.out.println("Testing setPixel() on a 3x3 encoding.");
     setAndCheckRLE(rle1, 0, 0, 0);
     image1.setPixel(0, 0, (short) 0, (short) 0, (short) 0);
     doTest(rle1.toPixImage().equals(image1),
            "Setting RLE1[0][0] = 0 fails.");
+//    System.err.println("\n\n\nSetting check RLE1[0][0] = 0.\nimage1: \n"
+//          + image1 + "\nrle1.toPixImage() : \n" + rle1.toPixImage() + "\n\n\n\n");
 
     System.out.println("Testing setPixel() on a 3x3 encoding.");
     setAndCheckRLE(rle1, 2, 2, 7);
@@ -379,7 +596,10 @@ public class RunLengthEncoding implements Iterable {
     setAndCheckRLE(rle3, 4, 0, 6);
     image3.setPixel(4, 0, (short) 6, (short) 6, (short) 6);
     doTest(rle3.toPixImage().equals(image3),
-           "Setting RLE3[4][0] = 6 fails.");
+           "Setting RLE3[4][0] = 6 fails.\nimage3: \n"
+          + image3 + "\nrle3.toPixImage() : \n" + rle3.toPixImage() + "\n\n\n\n");
+
+
 
     System.out.println("Testing setPixel() on a 5x2 encoding.");
     setAndCheckRLE(rle3, 0, 1, 6);
@@ -428,5 +648,9 @@ public class RunLengthEncoding implements Iterable {
     image4.setPixel(1, 0, (short) 1, (short) 1, (short) 1);
     doTest(rle4.toPixImage().equals(image4),
            "Setting RLE4[1][0] = 1 fails.");
+
+//      System.err.println("\n\n\nSetting check RLE1[1][0] = 0.\nimage4: \n"
+//          + image4 + "\nrle4.toPixImage() : \n" + rle4.toPixImage() + "\n\n\n\n");
+
   }
 }

@@ -65,11 +65,68 @@ public class SenDList {
 	newHead.next = head;
 	if (tail == null) tail = newHead;
 	else if (tail == head) tail.prev = newHead;
+	else head.prev = newHead;
 	head = newHead;
-	size += 1;
+	size++;
   }
+	/**
+	 *  insertFront() inserts an item at the back of a SenDList.
+	 */
+	public void insertBack(Object o) {
+		SenDListNode newTail = new SenDListNode(o);
+		newTail.prev = tail;
+		if (head == null) head = newTail;
+		else if (head == tail) head.next = newTail;
+		else tail.next = newTail;
+		tail = newTail;
+		size++;
+	}
 
-  /**
+	public void insertBefore(SenDListNode addToMyLeftNode, Object o)  {
+		if (addToMyLeftNode == null)  {
+			System.err.println("Error SenDListNode input for method insertBefore");
+			return;
+		}
+		if (addToMyLeftNode == head) {
+			insertFront(o);
+			return;
+		}
+		SenDListNode newNode = new SenDListNode(o, addToMyLeftNode.prev, addToMyLeftNode);
+		if (addToMyLeftNode.prev != null)
+			addToMyLeftNode.prev.next = newNode;
+		addToMyLeftNode.prev = newNode;
+		size++;
+	}
+
+	public void insertAfter(SenDListNode addToMyRightNode, Object o)  {
+		if (addToMyRightNode == null)  {
+			System.err.println("Error SenDListNode input for method addToMyRightNode");
+			return;
+		}
+		if (addToMyRightNode == tail) {
+			insertBack(o);
+			return;
+		}
+		SenDListNode newNode = new SenDListNode(o, addToMyRightNode, addToMyRightNode.next);
+		if (addToMyRightNode.next != null)
+			addToMyRightNode.next.prev = newNode;
+		addToMyRightNode.next = newNode;
+		size++;
+	}
+
+	public void remove(SenDListNode nodeToRemove)   {
+		if (size > 0)   {
+			if  (nodeToRemove == head) removeFront();
+			else if (nodeToRemove == tail) removeBack();
+			else {
+				nodeToRemove.prev.next = nodeToRemove.next;
+				nodeToRemove.next.prev = nodeToRemove.prev;
+				size--;
+			}
+		}else
+			System.err.println("There is no SenDListNode to remove !!");
+	}
+	/**
    *  removeFront() removes the first item (and node) from a SenDList.  If the
    *  list is empty, do nothing.
    */
@@ -87,6 +144,19 @@ public class SenDList {
 	}
   }
 
+	public void removeBack() {
+		// Your solution here.
+		if (tail != null)	{
+			if (head == tail) {
+				head = null;
+				tail = null;
+			}else {
+				tail.prev.next = null;
+				tail = tail.prev;
+			}
+			size -= 1;
+		}
+	}
   /**
    *  toString() returns a String representation of this DList.
    *

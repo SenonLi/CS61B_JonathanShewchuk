@@ -33,4 +33,9 @@ public class SenDListNode {
     next = null;
   }
 
+  SenDListNode(Object o, SenDListNode prev, SenDListNode next) {
+    item = o;
+    this.prev = prev;
+    this.next = next;
+  }
 }

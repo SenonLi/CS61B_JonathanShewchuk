@@ -38,8 +38,6 @@ public class RunIterator implements Iterator {
    */
     SenDListNode curRunNode;
 
-
-
   /**
    *  RunIterator() constructs a new iterator starting with a specified run.
    *
@@ -67,7 +65,7 @@ public class RunIterator implements Iterator {
    */
   public boolean hasNext() {
     // Replace the following line with your solution.
-    return curRunNode.next != null ;
+    return curRunNode != null ; // Attention: not curRunNode.next != null
   }
 
   /**
@@ -95,9 +93,16 @@ public class RunIterator implements Iterator {
     // Construct a new array of 4 ints, fill in its values, and return it.
     // Don't forget to advance the RunIterator's pointer so that the next
     // call to next() will return the subsequent run.
+    int[] runPixelInfoArray = new int[4];
+    runPixelInfoArray[0] = ((SenPixel)curRunNode.item).getRunLengthEncodingCount();
+    runPixelInfoArray[1] = ((SenPixel)curRunNode.item).getRed();
+    runPixelInfoArray[2] = ((SenPixel)curRunNode.item).getGreen();
+    runPixelInfoArray[3] = ((SenPixel)curRunNode.item).getBlue();
+    if(hasNext()) // make sure curRunNode != null
+        curRunNode = curRunNode.next;
 
+    return runPixelInfoArray;
     // Replace the following line with your solution.
-    return new int[4];
   }
 
   /**
