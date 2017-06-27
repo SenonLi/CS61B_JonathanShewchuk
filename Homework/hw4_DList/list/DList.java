@@ -52,7 +52,7 @@ public class DList {
    */
   public DList() {
     //  Your solution here.
-      head = new DListNode(null, head, head);
+      head = newNode(null, null, null);
       head.next = head;
       head.prev = head;
       size = 0;
@@ -83,7 +83,7 @@ public class DList {
    */
   public void insertFront(Object item) {
       // Your solution here.
-      DListNode newRealHead = new DListNode(item, head, head.next);
+      DListNode newRealHead = newNode(item, head, head.next);
       if (head.next == null)    head.prev = newRealHead;
       else head.next.prev = newRealHead;
       head.next = newRealHead;
@@ -98,7 +98,7 @@ public class DList {
    */
   public void insertBack(Object item) {
       // Your solution here.46.966565,7.74265
-      DListNode newRealTail = new DListNode(item, head.prev, head);
+      DListNode newRealTail = newNode(item, head.prev, head);
       if (head.prev == null) head.next = newRealTail;
       else head.prev.next = newRealTail;
       head.prev = newRealTail;
@@ -116,6 +116,7 @@ public class DList {
    */
   public DListNode front() {
       // Your solution here.
+      if (size ==0) return null;
       return head.next;
   }
 
@@ -130,6 +131,7 @@ public class DList {
    */
   public DListNode back() {
       // Your solution here.
+      if (size ==0) return null;
       return head.prev;
   }
 
@@ -177,7 +179,7 @@ public class DList {
   public void insertAfter(Object item, DListNode node) {
       // Your solution here.
       if (node == null) return;
-      DListNode newNode = new DListNode(item, node, node.next);
+      DListNode newNode = newNode(item, node, node.next);
       node.next.prev = newNode;
       node.next = newNode;
       size++;
@@ -193,7 +195,7 @@ public class DList {
   public void insertBefore(Object item, DListNode node) {
       // Your solution here.
       if (node == null) return;
-      DListNode newNode = new DListNode(item, node.prev, node);
+      DListNode newNode = newNode(item, node.prev, node);
       node.prev.next = newNode;
       node.prev = newNode;
       size++;
