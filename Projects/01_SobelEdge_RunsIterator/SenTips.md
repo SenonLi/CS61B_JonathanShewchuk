@@ -1,2 +1,3 @@
 ## Tips for Java Programming
 * Cannot cast from unsigned to signed (cannot from uchar to short)
+* The only "slant" method is toString of PixImage methoad, because all the rows are put into column...

@@ -52,6 +52,10 @@ public class DList {
    */
   public DList() {
     //  Your solution here.
+      head = new DListNode(null, head, head);
+      head.next = head;
+      head.prev = head;
+      size = 0;
   }
 
   /**
@@ -78,7 +82,13 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public void insertFront(Object item) {
-    // Your solution here.
+      // Your solution here.
+      DListNode newRealHead = new DListNode(item, head, head.next);
+      if (head.next == null)    head.prev = newRealHead;
+      else head.next.prev = newRealHead;
+      head.next = newRealHead;
+
+      size++;
   }
 
   /**
@@ -87,7 +97,12 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public void insertBack(Object item) {
-    // Your solution here.
+      // Your solution here.46.966565,7.74265
+      DListNode newRealTail = new DListNode(item, head.prev, head);
+      if (head.prev == null) head.next = newRealTail;
+      else head.prev.next = newRealTail;
+      head.prev = newRealTail;
+      size++;
   }
 
   /**
@@ -100,7 +115,8 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public DListNode front() {
-    // Your solution here.
+      // Your solution here.
+      return head.next;
   }
 
   /**
@@ -113,7 +129,8 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public DListNode back() {
-    // Your solution here.
+      // Your solution here.
+      return head.prev;
   }
 
   /**
@@ -127,7 +144,10 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public DListNode next(DListNode node) {
-    // Your solution here.
+      // Your solution here.
+      if (node == null) return null;
+      else if (node.next == null) return null;
+      else return node.next;
   }
 
   /**
@@ -141,7 +161,10 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public DListNode prev(DListNode node) {
-    // Your solution here.
+      // Your solution here.
+      if (node == null) return null;
+      else if (node.prev == null) return null;
+      else return node.prev;
   }
 
   /**
@@ -152,7 +175,12 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public void insertAfter(Object item, DListNode node) {
-    // Your solution here.
+      // Your solution here.
+      if (node == null) return;
+      DListNode newNode = new DListNode(item, node, node.next);
+      node.next.prev = newNode;
+      node.next = newNode;
+      size++;
   }
 
   /**
@@ -163,7 +191,12 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public void insertBefore(Object item, DListNode node) {
-    // Your solution here.
+      // Your solution here.
+      if (node == null) return;
+      DListNode newNode = new DListNode(item, node.prev, node);
+      node.prev.next = newNode;
+      node.prev = newNode;
+      size++;
   }
 
   /**
@@ -171,7 +204,11 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public void remove(DListNode node) {
-    // Your solution here.
+      // Your solution here.
+      if(node == null)  return;
+      if (node.prev != null)  node.prev.next = node.next;
+      if (node.next != null)  node.next.prev = node.prev;
+      size--;
   }
 
   /**

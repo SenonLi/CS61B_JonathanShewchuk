@@ -199,8 +199,6 @@ public class RunLengthEncoding implements Iterable {
 
       int curRunLength = 0;
       SenPixel basePixel = image.getPixel(0,0);
-//      for (int col=0; col<width; col++) {
-//          for (int row=0; row<height; row++)  {
       for (int row=0; row<height; row++) {
           for (int col=0; col<width; col++)  {
 
