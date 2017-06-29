@@ -5,7 +5,7 @@ import sortedlist.*;
 /**
  *  An implementation of a virtual automated teller machine.
  **/
-public class VirtualTeller {
+public class VirtualTeller{
   private static int nextAccountID = 100;
   private SortedList accounts;
 
@@ -36,7 +36,7 @@ public class VirtualTeller {
    *  @param acct is an account number.
    *  @param amount an amount of money.
    */
-  public void withdraw(int acct, int amount) {
+  public void withdraw(int acct, int amount)  throws BadAccountException{
     AccountData account = findAccount(acct);
 
     if (account == null) {   // Didn't find the account.
@@ -54,7 +54,7 @@ public class VirtualTeller {
    *  @param acct is an account number.
    *  @param amount an amount of money.
    */
-  public void deposit(int acct, int amount) {
+  public void deposit(int acct, int amount) throws BadAccountException{
     AccountData account = findAccount(acct);
 
     if (account == null) { 
@@ -71,7 +71,7 @@ public class VirtualTeller {
    *  @param acct an account number.
    *  @return the balance, or -1 if the account number is invalid.
    */
-  public int balanceInquiry(int acct) {
+  public int balanceInquiry(int acct)  throws BadAccountException{
     AccountData account = findAccount(acct);
 
     if (account == null) {
@@ -89,8 +89,10 @@ public class VirtualTeller {
    *  @param acct is an account number.
    *  @return the AccountData object associated with the account number.
    */
-  private AccountData findAccount(int acct) {
+  private AccountData findAccount(int acct) throws BadAccountException{
     AccountData account = (AccountData) accounts.find(acct);
+    if (account == null) throw new BadAccountException(acct);
+
     return account;
   }
 }

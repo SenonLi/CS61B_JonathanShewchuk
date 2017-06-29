@@ -13,9 +13,9 @@ public class BankApp {
   private VirtualTeller ATM = new VirtualTeller();
 
   public static void main(String[] args) {
-    greeting();
-    usage();
-    BankApp bankApp = new BankApp();
+      greeting();
+      usage();
+      BankApp bankApp = new BankApp();
       try {
           String command = bankApp.readLine("--> ");
           while (!command.equals("quit")) {
@@ -34,6 +34,8 @@ public class BankApp {
                   }
               } catch (IOException e) {
                   System.err.println(e);
+              } catch ( BadAccountException f)  {
+                  System.err.println(f);
               }
               command = bankApp.readLine("--> ");
           }
@@ -64,7 +66,7 @@ public class BankApp {
   *  deposit transaction on that account. 
   *  @exception IOException if there are problems reading user input.
   */
-  private void doDeposit() throws IOException {
+  private void doDeposit() throws IOException, BadAccountException {
     // Get account number.
     int acctNumber = readInt("Enter account number: ");
     int amount = readInt("Enter amount to deposit: ");
@@ -79,7 +81,7 @@ public class BankApp {
    *  to perform a withdrawal transaction from that account.
    *  @exception IOException if there are problems reading user input.
    */
-  private void doWithdraw() throws IOException {
+  private void doWithdraw() throws IOException, BadAccountException {
     // Get account number.
     int acctNumber = readInt("Enter account number: ");
     int amount = readInt("Enter amount to withdraw: ");
@@ -94,7 +96,7 @@ public class BankApp {
    *  discover and print that account's balance.
    *  @exception IOException if there are problems reading user input.
    */
-  private void doInquire() throws IOException {
+  private void doInquire() throws IOException, BadAccountException {
     int acctNumber = readInt("Enter account number: ");
 
     System.out.println("Balance for #" + acctNumber + " is " +
