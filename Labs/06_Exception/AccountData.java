@@ -53,7 +53,8 @@ public class AccountData implements Keyable {
   /** 
    *  withdraw() reduces the balance by the withdrawal amount "amt".
    **/
-  public void withdraw(int amt) {
+  public void withdraw(int amt) throws BadTransactionException{
+    if (amt <0) throw new BadTransactionException(amt);
     if (amt <= balance) {
       balance = balance - amt;
     } else {

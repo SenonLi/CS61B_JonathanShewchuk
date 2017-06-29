@@ -36,7 +36,7 @@ public class VirtualTeller{
    *  @param acct is an account number.
    *  @param amount an amount of money.
    */
-  public void withdraw(int acct, int amount)  throws BadAccountException{
+  public void withdraw(int acct, int amount)  throws BadAccountException, BadTransactionException{
     AccountData account = findAccount(acct);
 
     if (account == null) {   // Didn't find the account.
