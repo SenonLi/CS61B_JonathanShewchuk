@@ -50,7 +50,7 @@ public class DList extends List {
    **/
   protected DListNode newNode(Object item, DList list,
                               DListNode prev, DListNode next) {
-    return new DListNode(item, list, prev, next);
+      return new DListNode(item, list, prev, next);
   }
 
   /**
@@ -59,6 +59,10 @@ public class DList extends List {
   public DList() {
     // Your solution here.  Similar to Homework 4, but now you need to specify
     //   the `list' field (second parameter) as well.
+      head = newNode(null, null, null, null);
+      head.next = head;
+      head.prev = head;
+      size = 0;
   }
 
   /**
@@ -69,8 +73,12 @@ public class DList extends List {
    *  Performance:  runs in O(1) time.
    **/
   public void insertFront(Object item) {
-    // Your solution here.  Similar to Homework 4, but now you need to specify
-    //   the `list' field (second parameter) as well.
+      // Your solution here.  Similar to Homework 4, but now you need to specify
+      //   the `list' field (second parameter) as well.
+      DListNode newRealHead = newNode(item, this, head, head.next);
+      head.next.prev = newRealHead;
+      head.next = newRealHead;
+      size++;
   }
 
   /**
@@ -81,8 +89,12 @@ public class DList extends List {
    *  Performance:  runs in O(1) time.
    **/
   public void insertBack(Object item) {
-    // Your solution here.  Similar to Homework 4, but now you need to specify
-    //   the `list' field (second parameter) as well.
+      // Your solution here.  Similar to Homework 4, but now you need to specify
+      //   the `list' field (second parameter) as well.
+      DListNode newRealTail = newNode(item, this, head.prev, head);
+      head.prev.next = newRealTail;
+      head.prev = newRealTail;
+      size++;
   }
 
   /**

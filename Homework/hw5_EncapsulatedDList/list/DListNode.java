@@ -28,10 +28,10 @@ public class DListNode extends ListNode {
    *  @param n the node following this node.
    */
   DListNode(Object i, DList l, DListNode p, DListNode n) {
-    item = i;
-    myList = l;
-    prev = p;
-    next = n;
+      item = i;
+      myList = l;
+      prev = p;
+      next = n;
   }
 
   /**
@@ -90,14 +90,20 @@ public class DListNode extends ListNode {
    *  Performance:  runs in O(1) time.
    */
   public void insertAfter(Object item) throws InvalidNodeException {
-    if (!isValidNode()) {
-      throw new InvalidNodeException("insertAfter() called on invalid node");
-    }
-    // Your solution here.  Will look something like your Homework 4 solution,
-    //   but changes are necessary.  For instance, there is no need to check if
-    //   "this" is null.  Remember that this node's "myList" field tells you
-    //   what DList it's in.  You should use myList.newNode() to create the
-    //   new node.
+      if (!isValidNode()) {
+        throw new InvalidNodeException("insertAfter() called on invalid node");
+      }
+      // Your solution here.  Will look something like your Homework 4 solution,
+      //   but changes are necessary.  For instance, there is no need to check if
+      //   "this" is null.  Remember that this node's "myList" field tells you
+      //   what DList it's in.  You should use myList.newNode() to create the
+      //   new node.
+      if (myList instanceof DList)  {
+          DListNode newNode = ((DList)myList).newNode(item, (DList)myList, this, this.next);
+          this.next.prev = newNode;
+          this.next = newNode;
+          myList.size++;
+      }
   }
 
   /**
@@ -110,14 +116,20 @@ public class DListNode extends ListNode {
    *  Performance:  runs in O(1) time.
    */
   public void insertBefore(Object item) throws InvalidNodeException {
-    if (!isValidNode()) {
-      throw new InvalidNodeException("insertBefore() called on invalid node");
-    }
-    // Your solution here.  Will look something like your Homework 4 solution,
-    //   but changes are necessary.  For instance, there is no need to check if
-    //   "this" is null.  Remember that this node's "myList" field tells you
-    //   what DList it's in.  You should use myList.newNode() to create the
-    //   new node.
+      if (!isValidNode()) {
+        throw new InvalidNodeException("insertBefore() called on invalid node");
+      }
+      // Your solution here.  Will look something like your Homework 4 solution,
+      //   but changes are necessary.  For instance, there is no need to check if
+      //   "this" is null.  Remember that this node's "myList" field tells you
+      //   what DList it's in.  You should use myList.newNode() to create the
+      //   new node.
+      if (myList instanceof DList)  {
+          DListNode newNode = ((DList)myList).newNode(item, (DList)myList, this.prev, this);
+          this.prev.next = newNode;
+          this.prev = newNode;
+          myList.size++;
+      }
   }
 
   /**
@@ -136,8 +148,9 @@ public class DListNode extends ListNode {
     //   but changes are necessary.  For instance, there is no need to check if
     //   "this" is null.  Remember that this node's "myList" field tells you
     //   what DList it's in.
-
-
+    if (this.prev != null)  this.prev.next = this.next;
+    if (this.next != null)  this.next.prev = this.prev;
+    if (myList instanceof DList)    myList.size--;
 
     // Make this node an invalid node, so it cannot be used to corrupt myList.
     myList = null;

@@ -97,7 +97,7 @@ public class DList {
    *  Performance:  runs in O(1) time.
    */
   public void insertBack(Object item) {
-      // Your solution here.46.966565,7.74265
+      // Your solution here
       DListNode newRealTail = newNode(item, head.prev, head);
       if (head.prev == null) head.next = newRealTail;
       else head.prev.next = newRealTail;
