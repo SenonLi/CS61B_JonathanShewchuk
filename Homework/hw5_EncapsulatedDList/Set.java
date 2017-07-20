@@ -8,6 +8,7 @@ import list.*;
  **/
 public class Set {
   /* Fill in the data fields here. */
+    private List list;
 
   /**
    * Set ADT invariants:
@@ -23,7 +24,8 @@ public class Set {
    *  Performance:  runs in O(1) time.
    **/
   public Set() { 
-    // Your solution here.
+      // Your solution here.
+      list = new DList();
   }
 
   /**
@@ -32,8 +34,8 @@ public class Set {
    *  Performance:  runs in O(1) time.
    **/
   public int cardinality() {
-    // Replace the following line with your solution.
-    return 0;
+      // Replace the following line with your solution.
+      return list.length();
   }
 
   /**
@@ -44,8 +46,25 @@ public class Set {
    *
    *  Performance:  runs in O(this.cardinality()) time.
    **/
-  public void insert(Comparable c) {
-    // Your solution here.
+  public void insert(Comparable c) throws InvalidNodeException{
+      // Your solution here.
+      if(c == null) {
+        return;
+      }else if(cardinality() == 0)  {
+          list.insertFront(c);
+      }else {
+          ListNode masterNode = list.front();
+          int masterNodeCompareSign = ((Comparable)masterNode.item()).compareTo(c);
+          // locate the masterNode that is >= c if not the end
+          while(masterNodeCompareSign < 0 && masterNode != list.back()) {
+              masterNode = masterNode.next();
+              masterNodeCompareSign = ((Comparable)masterNode.item()).compareTo(c);
+          }
+          if (masterNodeCompareSign > 0) // located or to the end of master
+              masterNode.insertBefore(c);
+          else if (masterNodeCompareSign < 0) // to the end of master
+              masterNode.insertAfter(c);
+      }
   }
 
   /**
@@ -63,8 +82,28 @@ public class Set {
    *  DO NOT MODIFY THE SET s.
    *  DO NOT ATTEMPT TO COPY ELEMENTS; just copy _references_ to them.
    **/
-  public void union(Set s) {
-    // Your solution here.
+  public void union(Set s) throws InvalidNodeException{
+      // Your solution here.
+      if(s != null) {
+          ListNode masterNode = this.list.front();
+          ListNode guestNode = s.list.front();
+          while(masterNode.isValidNode() && guestNode.isValidNode())  {
+              int masterNodeCompareSign = ((Comparable)masterNode.item()).compareTo(guestNode.item());
+              if(masterNodeCompareSign < 0) {
+                  masterNode = masterNode.next();
+              }else if (masterNodeCompareSign == 0) {
+                  masterNode = masterNode.next();
+                  guestNode = guestNode.next();
+              }else {
+                  masterNode.insertBefore(guestNode.item());
+                  guestNode = guestNode.next();
+              }
+          }
+          while(guestNode.isValidNode())  {
+              this.list.insertBack(guestNode.item());
+              guestNode = guestNode.next();
+          }
+      }
   }
 
   /**
@@ -80,8 +119,30 @@ public class Set {
    *  DO NOT CONSTRUCT ANY NEW NODES.
    *  DO NOT ATTEMPT TO COPY ELEMENTS.
    **/
-  public void intersect(Set s) {
-    // Your solution here.
+  public void intersect(Set s) throws InvalidNodeException {
+      // Your solution here.
+      if (s != null && this.cardinality() != 0) {
+          ListNode masterNode = this.list.front();
+          ListNode guestNode = s.list.front();
+          while (masterNode.isValidNode() && guestNode.isValidNode()) {
+              int masterNodeCompareSign = ((Comparable)masterNode.item()).compareTo(guestNode.item());
+              if(masterNodeCompareSign < 0) {
+                  ListNode next = masterNode.next();
+                  masterNode.remove();
+                  masterNode = next;
+              }else if (masterNodeCompareSign == 0) {
+                  masterNode = masterNode.next();
+                  guestNode = guestNode.next();
+              }else {
+                guestNode = guestNode.next();
+              }
+          }
+          while(masterNode.isValidNode()) {
+              ListNode next = masterNode.next();
+              masterNode.remove();
+              masterNode = next;
+          }
+      }
   }
 
   /**
@@ -101,10 +162,10 @@ public class Set {
    **/
   public String toString() {
     // Replace the following line with your solution.
-    return "";
+    return list.toString();
   }
 
-  public static void main(String[] argv) {
+  public static void main(String[] argv) throws InvalidNodeException {
     Set s = new Set();
     s.insert(new Integer(3));
     s.insert(new Integer(4));
