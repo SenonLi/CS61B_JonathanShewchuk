@@ -101,8 +101,111 @@ public class Tree234 extends IntDictionary {
    *  @param key is the key sought.
    **/
   public void insert(int key) {
-    // Fill in your solution here.
+      // Fill in your solution here.
+      // if tree is empty, make new root node containing the key
+      if (isEmpty()) {
+        root = new Tree234Node(null, key);
+        size = 1;
+        return;
+      }
+
+      // find the ptrNode and insertKeyToNode()
+      Tree234Node ptrNode = root;
+      while (ptrNode != null)  {
+          /** Check if key already in this ptrNode or not */
+          if (keyInNode(ptrNode, key)) {
+              return;
+          }
+
+          /** if not in current prtNode, check next possible Node **/
+          // for special 3-keys-node
+          if (ptrNode.keys == 3)  {
+              // send the middle node to either parent or new root
+              if (ptrNode == root) {
+                  root = new Tree234Node(null, ptrNode.key2);
+                  ptrNode.parent = root;
+              } else {
+                  insertKeyToNode(ptrNode.parent, ptrNode.key2);
+              }
+
+              // Split ptrNode, and assign/re-arrange children of ptrNode's parent
+              Tree234Node parentNode = ptrNode.parent;
+              Tree234Node left = new Tree234Node(parentNode, ptrNode.key1);
+              Tree234Node right = new Tree234Node(parentNode, ptrNode.key3);
+              if (ptrNode.key2 == parentNode.key1) {
+                  parentNode.child4 = parentNode.child3;
+                  parentNode.child3 = parentNode.child2;
+                  parentNode.child2 = right;
+                  parentNode.child1 = left;
+              }else if (ptrNode.key2 == parentNode.key2)  {
+                  parentNode.child4 = parentNode.child3;
+                  parentNode.child3 = right;
+                  parentNode.child2 = left;
+              }else {
+                  parentNode.child4 = right;
+                  parentNode.child3 = left;
+              }
+
+              // re-arrange children of left and right nodes
+              left.child1   = ptrNode.child1;
+              left.child2   = ptrNode.child2;
+              right.child1  = ptrNode.child3;
+              right.child2  = ptrNode.child4;
+
+              // ptrNode has either no child, or 4 children;
+              // if 4 children, set their parentNode
+              if (ptrNode.child1 != null) {
+                  left.child1.parent = left;
+                  left.child2.parent = left;
+                  right.child1.parent = right;
+                  right.child2.parent = right;
+              } else {  // otherwise, choose the correct node as leaf node
+                  if (key < ptrNode.key1)     ptrNode = left;
+                  else                        ptrNode = right;
+              }
+          }
+
+          // no sibling checking;
+          // if not in this node, has to be under one branch of subtree
+          Tree234Node nextNode = getNextNode(ptrNode, key);
+          // if reach a leaf, insert key to ptrNode
+          if (nextNode == null) {
+              insertKeyToNode(ptrNode, key);
+              size++;
+          }else
+            ptrNode = nextNode;
+      }
   }
+
+    private boolean keyInNode(Tree234Node node, int key)  {
+        return (key == node.key1) || (key == node.key2) || (key == node.key3);
+    }
+
+    private Tree234Node getNextNode(Tree234Node node, int key) {
+        if (key < node.key1) {
+            return node.child1;
+        } else if ((node.keys == 1) || (key < node.key2)) {
+            return node.child2;
+        } else if ((node.keys == 2) || (key < node.key3)) {
+            return node.child3;
+        } else {
+            return node.child4;
+        }
+    }
+
+    private void insertKeyToNode(Tree234Node nodeToInsert, int key) {
+        if (key < nodeToInsert.key1) {
+            nodeToInsert.key3 = nodeToInsert.key2;
+            nodeToInsert.key2 = nodeToInsert.key1;
+            nodeToInsert.key1 = key;
+        } else if ((nodeToInsert.keys == 1) || (key < nodeToInsert.key2)) {
+            nodeToInsert.key3 = nodeToInsert.key2;
+            nodeToInsert.key2 = key;
+        } else {
+            nodeToInsert.key3 = key;
+        }
+        nodeToInsert.keys++;
+    }
 
 
   /**
