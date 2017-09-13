@@ -158,42 +158,63 @@ public class BinaryTree implements Dictionary {
       BinaryTreeNode nodeToRemove = findHelper((Comparable) key, root);
       if (nodeToRemove == null)   return null;
 
+      boolean hasLeftChild  = nodeToRemove.leftChild != null;
+      boolean hasRightChild = nodeToRemove.rightChild != null;
+      boolean isRoot = (nodeToRemove == root) && (nodeToRemove.parent == null);
+      boolean atParentLeft  = isRoot ? false : (nodeToRemove.parent.leftChild == nodeToRemove);
+      boolean atParentRight = isRoot ? false : (nodeToRemove.parent.rightChild == nodeToRemove);
 
-      if (nodeToRemove.leftChild == null && nodeToRemove.rightChild == null) {
-          if (nodeToRemove == root) {
-              root = null;
-          }else if (nodeToRemove.parent.leftChild == nodeToRemove) {
-              nodeToRemove.parent.leftChild = null;
+      /** 1. no children */
+      if (!hasLeftChild && !hasRightChild) {
+          if (isRoot)               root = null;
+          else if (atParentLeft)    nodeToRemove.parent.leftChild   = null;
+          else if (atParentRight)   nodeToRemove.parent.rightChild  = null;
+
+      } else if (hasLeftChild && hasRightChild){
+      /** 2. Two side child, find minRightNode to replace with nodeThis */
+          if (nodeToRemove.rightChild.leftChild == null) {
+              nodeToRemove.entry = nodeToRemove.rightChild.entry;
+              if (nodeToRemove.rightChild.rightChild != null) {
+                nodeToRemove.rightChild.rightChild.parent = nodeToRemove;
+              }
+              nodeToRemove.rightChild = nodeToRemove.rightChild.rightChild;
           }else {
-              nodeToRemove.parent.rightChild = null;
-          }
-      } else if (nodeToRemove.leftChild == null || nodeToRemove.rightChild == null) {
-          if (nodeToRemove.leftChild == null) {
-            removeRightNode(node, node.rightChild);
-          } else {
-            removeLeftNode(node, node.leftChild);
+              BinaryTreeNode minRightNode = findMinRightNode(nodeToRemove);
+
+              nodeToRemove.entry = minRightNode.entry;
+              if (minRightNode.rightChild == null) {
+                minRightNode.parent.leftChild = null;
+              } else {
+                minRightNode.rightChild.parent = minRightNode.parent;
+                minRightNode.parent.leftChild = minRightNode.rightChild;
+              }
           }
       } else {
-        if (node.rightChild.leftChild == null) {
-          node.entry = node.rightChild.entry;
-          if (node.rightChild.rightChild != null) {
-            node.rightChild.rightChild.parent = node;
+          /** 3. One side child, move the child up to the correct position */
+          if (isRoot) {
+              root = hasLeftChild ? nodeToRemove.leftChild : nodeToRemove.rightChild;
+              root.parent = null;
+          }else if (atParentLeft) {
+              nodeToRemove.parent.leftChild = hasLeftChild ? nodeToRemove.leftChild : nodeToRemove.rightChild;
+              nodeToRemove.parent.leftChild.parent =  nodeToRemove.parent;
+          }else if (atParentRight){
+              nodeToRemove.parent.rightChild = hasLeftChild ? nodeToRemove.leftChild : nodeToRemove.rightChild;
+              nodeToRemove.parent.rightChild.parent =  nodeToRemove.parent;
           }
-          node.rightChild = node.rightChild.rightChild;
-        } else {
-          BinaryTreeNode minRightNode = findMinRightNode(node.rightChild);
-          node.entry = minRightNode.entry;
-          if (minRightNode.rightChild == null) {
-            minRightNode.parent.leftChild = null;
-          } else {
-            minRightNode.rightChild.parent = minRightNode.parent;
-            minRightNode.parent.leftChild = minRightNode.rightChild;
-          }
-        }
-
+      }
 
       size--;
       return nodeToRemove.entry;
+  }
+
+  private BinaryTreeNode findMinRightNode(BinaryTreeNode targetNode) {
+      if (targetNode == null || targetNode.rightChild == null ) return null;
+
+      BinaryTreeNode minRightNode = targetNode.rightChild;
+      while (minRightNode.leftChild != null) {
+          minRightNode = minRightNode.leftChild;
+      }
+      return minRightNode;
   }
 
   /**
