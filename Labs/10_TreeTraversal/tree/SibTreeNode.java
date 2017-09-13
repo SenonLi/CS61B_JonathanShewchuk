@@ -78,7 +78,13 @@ class SibTreeNode extends TreeNode {
    */
   public TreeNode parent() throws InvalidNodeException {
     // REPLACE THE FOLLOWING LINE WITH YOUR SOLUTION TO PART I.
-    return null;
+      if(isValidNode())    {
+          if (this.equals(myTree.root)) {
+              return new SibTreeNode();
+          }
+          return parent;
+      }
+      else throw new InvalidNodeException();
   }
 
   /**
@@ -132,7 +138,35 @@ class SibTreeNode extends TreeNode {
    *  Throws an InvalidNodeException if "this" node is invalid.
    */
   public void insertChild(Object item, int c) throws InvalidNodeException {
-    // FILL IN YOUR SOLUTION TO PART II HERE.
+      // FILL IN YOUR SOLUTION TO PART II HERE.
+      if(!this.isValidNode()) throw new InvalidNodeException();
+
+      /** if no child or c <= 1 (insert the first childNode) */
+      if (c <= 1 || firstChild == null) {
+          SibTreeNode newFirstSibNode = new SibTreeNode(myTree, item);
+          newFirstSibNode.parent = this;
+          newFirstSibNode.nextSibling = firstChild;
+          firstChild = newFirstSibNode;
+          myTree.size++;
+          return;
+      }
+
+      /** determine the (n-1)th childNode */
+      SibTreeNode prevNodeToInsertBefore = firstChild;
+      SibTreeNode nodeToInsertBefore    = firstChild.nextSibling;
+
+      while (nodeToInsertBefore != null && c > 2) {
+          prevNodeToInsertBefore = nodeToInsertBefore;
+          nodeToInsertBefore = nodeToInsertBefore.nextSibling;
+          c--;
+      }
+
+      // Insert newSibNode after prevNodeToInsertBefore
+      SibTreeNode newSibNode = new SibTreeNode(myTree, item);
+      newSibNode.parent = this;
+      newSibNode.nextSibling = nodeToInsertBefore;
+      prevNodeToInsertBefore.nextSibling = newSibNode;
+      myTree.size++;
   }
 
   /**
@@ -142,7 +176,33 @@ class SibTreeNode extends TreeNode {
    *  its right, those siblings are all shifted left by one.
    */
   public void removeLeaf() throws InvalidNodeException {
-    // FILL IN YOUR SOLUTION TO PART III HERE.
+      // FILL IN YOUR SOLUTION TO PART III HERE.
+      if (!this.isValidNode()) throw new InvalidNodeException();
+      if (this.firstChild != null) return;
+      myTree.size--;
+
+      /** If nodeThis is the root, */
+      if (this.parent == null) {
+          this.valid = false;
+          return;
+      }
+
+      /** nodeThis is the first child of parent */
+      if (parent.firstChild.equals(this)) {
+          parent.firstChild = this.nextSibling;
+      }else {
+          /** find the Node before nodeThis*/
+          SibTreeNode prevNodeThis = parent.firstChild;
+          SibTreeNode nodeThis = prevNodeThis.nextSibling;
+
+          while (nodeThis != null && !nodeThis.equals(this)) {
+            prevNodeThis = nodeThis;
+            nodeThis = nodeThis.nextSibling;
+          }
+          prevNodeThis.nextSibling = this.nextSibling;
+      }
+
+      this.valid = false;
   }
 
 }
