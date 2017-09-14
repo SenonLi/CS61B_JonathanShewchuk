@@ -13,9 +13,24 @@ public class ListSorts {
    *  @return a LinkedQueue containing LinkedQueue objects, each of which
    *    contains one object from q.
    **/
-  public static LinkedQueue makeQueueOfQueues(LinkedQueue q) {
-    // Replace the following line with your solution.
-    return null;
+  public static LinkedQueue makeQueueOfQueues(LinkedQueue q){
+      // Replace the following line with your solution.
+      if (q == null) return null;
+      LinkedQueue queueOfQueues = new LinkedQueue();
+
+      while(!q.isEmpty()) {
+          LinkedQueue queueObject = new LinkedQueue();
+
+          try {
+              queueObject.enqueue(q.dequeue());
+          } catch(QueueEmptyException e) {
+              System.err.println("In makeQueueOfQueues()" + e);
+          }
+
+          queueOfQueues.enqueue(queueObject);
+      }
+
+      return queueOfQueues;
   }
 
   /**
@@ -29,9 +44,58 @@ public class ListSorts {
    *  @return a LinkedQueue containing all the Comparable objects from q1 
    *   and q2 (and nothing else), sorted from smallest to largest.
    **/
-  public static LinkedQueue mergeSortedQueues(LinkedQueue q1, LinkedQueue q2) {
-    // Replace the following line with your solution.
-    return null;
+  public static LinkedQueue mergeSortedQueues(LinkedQueue q1, LinkedQueue q2) throws QueueEmptyException{
+      // Replace the following line with your solution.
+      if(q1 == null || q2 == null)    throw new QueueEmptyException("null in mergeSortedQueues");
+
+      LinkedQueue mergedSortedQueue = new LinkedQueue();
+      try {
+          while(!q1.isEmpty() && !q2.isEmpty()) {
+              Object nextSmallest = ((Comparable)q1.front()).compareTo(q2.front()) < 0 ? q1.dequeue() : q2.dequeue();
+              mergedSortedQueue.enqueue(nextSmallest);
+          }
+          while(!q1.isEmpty())   mergedSortedQueue.enqueue(q1.dequeue());
+          while(!q2.isEmpty())   mergedSortedQueue.enqueue(q2.dequeue());
+      } catch(QueueEmptyException e) {
+          System.err.println("In mergeSortedQueues()" + e);
+      }
+      return mergedSortedQueue;
+  }
+
+  private static LinkedQueue mergeVeryTwoNodes(LinkedQueue queueOfQueues) {
+      LinkedQueue mergedQueueOfQueues = new LinkedQueue();
+      if(queueOfQueues != null) {
+          while (!queueOfQueues.isEmpty()) {
+              try {
+                  Object firstQueue = queueOfQueues.dequeue();
+                  Object secondQueue = queueOfQueues.isEmpty() ? new LinkedQueue() : queueOfQueues.dequeue();
+                  mergedQueueOfQueues.enqueue(mergeSortedQueues((LinkedQueue)firstQueue, (LinkedQueue)secondQueue));
+              } catch(QueueEmptyException e) {
+                  System.err.println("In mergeVeryTwoNodes()" + e);
+              }
+          }
+      }
+      return mergedQueueOfQueues;
+  }
+  /**
+   *  mergeSort() sorts q from smallest to largest using mergesort.
+   *  @param q is a LinkedQueue of Comparable objects.
+   **/
+  public static void mergeSort(LinkedQueue q) {
+      // Your solution here.
+      /** 1. Split into single Object Queues and save and a queueOfQueues */
+      LinkedQueue splitedQueueOfQueues = makeQueueOfQueues(q);
+      /** 2. mergeSort recursively into a one-sorted-queue queueOfQueues */
+      while(splitedQueueOfQueues.size() > 1)  {
+          splitedQueueOfQueues = mergeVeryTwoNodes(splitedQueueOfQueues);
+      }
+      /** 3. move sorted objects in the one-sorted-queue queueOfQueues back to queue q */
+      try {
+          LinkedQueue sortedQueue = (LinkedQueue)splitedQueueOfQueues.front();
+          while(!sortedQueue.isEmpty())     q.enqueue(sortedQueue.dequeue());
+      }catch(QueueEmptyException e) {
+          System.err.println("In mergeSort()" + e);
+      }
   }
 
   /**
@@ -50,14 +114,6 @@ public class ListSorts {
   public static void partition(LinkedQueue qIn, Comparable pivot, 
                                LinkedQueue qSmall, LinkedQueue qEquals, 
                                LinkedQueue qLarge) {
-    // Your solution here.
-  }
-
-  /**
-   *  mergeSort() sorts q from smallest to largest using mergesort.
-   *  @param q is a LinkedQueue of Comparable objects.
-   **/
-  public static void mergeSort(LinkedQueue q) {
     // Your solution here.
   }
 
