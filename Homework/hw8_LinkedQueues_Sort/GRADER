@@ -16,6 +16,10 @@ Part IV.
 
   Is mergesort stable?  
   Why or why not?
+mergesort的merge函数在q1 q2 元素相等时每次优先将q1的元素放入新队列中，因此顺序可能会改变，所以不是stable；
+
 
   Is quicksort stable?  
   Why or why not?
+
+quicksort排序中，由于有了qEquals队列的存在，相等的元素顺序并不会改变，因此是stable的。

@@ -4,7 +4,7 @@ import list.*;
 
 public class ListSorts {
 
-  private final static int SORTSIZE = 1000;
+  private final static int SORTSIZE = 1000000;
 
   /**
    *  makeQueueOfQueues() makes a queue of queues, each containing one item
@@ -113,16 +113,40 @@ public class ListSorts {
    **/   
   public static void partition(LinkedQueue qIn, Comparable pivot, 
                                LinkedQueue qSmall, LinkedQueue qEquals, 
-                               LinkedQueue qLarge) {
-    // Your solution here.
+                               LinkedQueue qLarge) throws QueueEmptyException  {
+      // Your solution here.
+      while(!qIn.isEmpty()) {
+          int result = ((Comparable)qIn.front()).compareTo(pivot);
+          if(result < 0)        qSmall.enqueue(qIn.dequeue());
+          else if (result > 0)  qLarge.enqueue(qIn.dequeue());
+          else                  qEquals.enqueue(qIn.dequeue());
+      }
   }
 
   /**
    *  quickSort() sorts q from smallest to largest using quicksort.
    *  @param q is a LinkedQueue of Comparable objects.
    **/
-  public static void quickSort(LinkedQueue q) {
-    // Your solution here.
+  public static void quickSort(LinkedQueue q){
+      // Your solution here.
+      if (q.size() <= 1) return;
+      int index = ((int)(Math.random() * 100000)) % q.size() + 1;
+      Comparable pivot = (Comparable) q.nth(index);
+      LinkedQueue qSmall = new LinkedQueue();
+      LinkedQueue qEquals = new LinkedQueue();
+      LinkedQueue qLarge = new LinkedQueue();
+
+      try {
+          partition(q, pivot, qSmall, qEquals, qLarge);
+      }catch(QueueEmptyException e) {
+          System.err.println("In quickSort()" + e);
+      }
+
+      if (qSmall.size() > 1)    quickSort(qSmall);
+      if (qLarge.size() > 1)    quickSort(qLarge);
+      q.append(qSmall);
+      q.append(qEquals);
+      q.append(qLarge);
   }
 
   /**
@@ -155,7 +179,7 @@ public class ListSorts {
     quickSort(q);
     System.out.println(q.toString());
 
-    /* Remove these comments for Part III.
+    ///* Remove these comments for Part III.
     Timer stopWatch = new Timer();
     q = makeRandom(SORTSIZE);
     stopWatch.start();
@@ -171,7 +195,7 @@ public class ListSorts {
     stopWatch.stop();
     System.out.println("Quicksort time, " + SORTSIZE + " Integers:  " +
                        stopWatch.elapsed() + " msec.");
-    */
+    //*/
   }
 
 }
