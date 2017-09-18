@@ -31,7 +31,7 @@ public class UDGraph
     adjMatrix = new boolean[n][n];
     for (int i = 0; i < vertices; i++ ) {
       for (int j = 0; j < vertices; j++ ) {
-	adjMatrix[i][j] = false;
+	    adjMatrix[i][j] = false;
       }
     }
   }
@@ -79,12 +79,12 @@ public class UDGraph
    *  Creates the edge (origin, destination).  If the edge did not already
    *    exists, increments the edge count.
    *  @param origin the origin vertex.
-   *  @param edstination the destination vertex.
+   *  @param destination the destination vertex.
    */
   public void addEdge(int origin, int destination) {
     if (validVertex(origin) && validVertex(destination)) {
       if (!adjMatrix[origin][destination]) {
-	adjMatrix[origin][destination] = true;
+	    adjMatrix[origin][destination] = true;
         edges++;
       }
     }    
@@ -99,8 +99,8 @@ public class UDGraph
   public void removeEdge(int origin, int destination) {
     if (validVertex(origin) && validVertex(destination)) {
       if (adjMatrix[origin][destination]) {
-	adjMatrix[origin][destination] = false;
-	edges--;
+        adjMatrix[origin][destination] = false;
+        edges--;
       }
     }        
   }
@@ -113,9 +113,18 @@ public class UDGraph
    *  @return the new UDGraph.
    */
   public UDGraph length2Paths() {
-    UDGraph newGraph = new UDGraph(vertices);
-    // Put your answer to Part I here.
-    return newGraph;
+      UDGraph newGraph = new UDGraph(vertices);
+      // Put your answer to Part I here.
+      for (int i = 0; i < vertices; i++)  {
+          for (int j = 0; j < vertices; j++)  {
+              if (hasEdge(i, j))  {
+                  for (int k=0; k< vertices; k++) {
+                      if (hasEdge(j, k))   newGraph.addEdge(i, k);
+                  }
+              }
+          }
+      }
+      return newGraph;
   }
 
   /**
@@ -126,8 +135,49 @@ public class UDGraph
    *  @return the new UDGraph.
    */
   public UDGraph paths(int length) {
+      UDGraph newGraph = new UDGraph(vertices);
+      // Put your answer to Part II here.
+      if (length > 1)  newGraph = length2Paths();
+      length--;
+      while( length > 1)  {
+          newGraph = lengthPlusOne(newGraph);
+          length--;
+      }
+      return newGraph;
+  }
+
+  public UDGraph lengthPlusOne(UDGraph prevGraph) {
+      UDGraph newGraph = new UDGraph(vertices);
+      for (int i = 0; i < vertices; i++)  {
+          for (int j = 0; j < vertices; j++)  {
+              if (prevGraph.hasEdge(i, j))  {
+                  for (int k=0; k< vertices; k++) {
+                      if (hasEdge(j, k))   newGraph.addEdge(i, k);
+                  }
+              }
+          }
+      }
+      return newGraph;
+  }
+  
+  /** Standard Solution: */
+  public UDGraph nPaths(int length) {
     UDGraph newGraph = new UDGraph(vertices);
     // Put your answer to Part II here.
+    if (length == 2) {
+      newGraph = length2Paths();
+    } else {
+      UDGraph g = paths(length - 1);
+      for (int i = 0; i < vertices; ++i) {
+        for (int j = 0; j < vertices; ++j) {
+          for (int k = 0; k < vertices; ++k) {
+            if (g.hasEdge(i, k) && hasEdge(k, j)) {
+              newGraph.addEdge(i, j);
+            }
+          }
+        }
+      }
+    }
     return newGraph;
   }
 
