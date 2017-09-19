@@ -1,34 +1,42 @@
 /* WUGraph.java */
 
 package graph;
-
+import list.*;
+import dict.*;
 /**
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
  * permitted.
  */
 
 public class WUGraph {
+    protected DList verticesList;
+    protected HashTableChained verticesHashTable;
+    protected HashTableChained edgesHashTable;
 
   /**
    * WUGraph() constructs a graph having no vertices or edges.
    *
    * Running time:  O(1).
    */
-  public WUGraph();
+  public WUGraph(){
+      verticesList = new DList();
+      verticesHashTable = new HashTableChained();
+      edgesHashTable = new HashTableChained();
+  }
 
   /**
    * vertexCount() returns the number of vertices in the graph.
    *
    * Running time:  O(1).
    */
-  public int vertexCount();
+  public int vertexCount()  {   return verticesList.length();  }
 
   /**
    * edgeCount() returns the total number of edges in the graph.
    *
    * Running time:  O(1).
    */
-  public int edgeCount();
+  public int edgeCount()    {   return edgesHashTable.size();   }
 
   /**
    * getVertices() returns an array containing all the objects that serve
@@ -42,7 +50,16 @@ public class WUGraph {
    *
    * Running time:  O(|V|).
    */
-  public Object[] getVertices();
+  public Object[] getVertices() throws InvalidNodeException{
+      Object[] verticesArray = new Object[verticesList.length()];
+      ListNode vertexNode = verticesList.front();
+      int index = 0;
+      while(vertexNode.isValidNode()) {
+          verticesArray[index++] = ((SenWUGraphVertex)vertexNode.item()).getVertexHashKey();
+          vertexNode = vertexNode.next();
+      }
+      return verticesArray;
+  }
 
   /**
    * addVertex() adds a vertex (with no incident edges) to the graph.
@@ -51,7 +68,14 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void addVertex(Object vertex);
+  public void addVertex(Object vertex)  {
+      if (isVertex(vertex))     return;
+
+      SenWUGraphVertex myVertex = new SenWUGraphVertex(vertex);
+      verticesHashTable.insert(vertex, myVertex);
+      verticesList.insertBack(myVertex);
+      myVertex.setListNodeAddress(verticesList.back());
+  }
 
   /**
    * removeVertex() removes a vertex from the graph.  All edges incident on the
@@ -68,7 +92,9 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public boolean isVertex(Object vertex);
+  public boolean isVertex(Object vertex)    {
+      return verticesHashTable.find(vertex) != null;
+  }
 
   /**
    * degree() returns the degree of a vertex.  Self-edges add only one to the
