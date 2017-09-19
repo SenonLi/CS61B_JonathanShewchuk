@@ -17,7 +17,6 @@ public class Entry {
   public Object key() {
     return key;
   }
-
   public Object value() {
     return value;
   }

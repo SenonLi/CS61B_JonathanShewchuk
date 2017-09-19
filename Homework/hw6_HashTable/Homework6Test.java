@@ -49,7 +49,7 @@ public class Homework6Test {
     int numBoards;
 
     if (args.length == 0) {
-      numBoards = 500;
+      numBoards = 100;
     } else {
       numBoards = Integer.parseInt(args[0]);
     }

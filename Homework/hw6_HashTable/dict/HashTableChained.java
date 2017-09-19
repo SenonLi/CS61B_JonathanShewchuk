@@ -28,12 +28,39 @@ public class HashTableChained implements Dictionary {
     public int getNumOfCollisions()   { return numCollisions; }
     public int getNumberOfBuckets()   { return numberOfBuckets; }
 
-  /** 
+    /** Sen Add resize to chained HashTable based on load factor, on Sep 18th, 2017 */
+    private static final float MAX_LOADFACTOR = 0.996f;
+    private static final float MIN_LOADFACTOR = 0.3f;
+
+    private float getLoadFactor(){
+        return (float)numberOfEntrys/numberOfBuckets;
+    }
+
+    private void resizeBucketsTable(float factor)   {
+        int oldNumBuckets = numberOfBuckets;
+        List[] oldBucketsTable = bucketsTable;
+
+        numberOfBuckets = nextPrime((int) (numberOfBuckets * factor));
+        makeEmpty(); // Create new bucketsTable based on the resized numberOfBuckets
+        try{
+            for (int i = 0; i < oldNumBuckets; i++) {
+                List bucketList = oldBucketsTable[i];
+                ListNode currNode = bucketList.front();
+                while (currNode != null) {
+                    this.insert(((Entry) currNode.item()).key(), ((Entry) currNode.item()).value());
+                    currNode = currNode.next();
+                }
+            }
+        }catch (InvalidNodeException e) {
+            System.out.println("InvalidNodeException in resizeBucketsTable() " + e.toString());
+        }
+    }
+
+    /**
    *  Construct a new empty hash table intended to hold roughly sizeEstimate
    *  entries.  (The precise number of buckets is up to you, but we recommend
    *  you use a prime number, and shoot for a load factor between 0.5 and 1.)
    **/
-
   public HashTableChained(int sizeEstimate) {
       // Your solution here.
       numberOfBuckets = nextPrime(sizeEstimate);
@@ -45,7 +72,7 @@ public class HashTableChained implements Dictionary {
       numCollisions   = 0;
   }
 
-  /** 
+  /**
    *  Construct a new empty hash table with a default size.  Say, a prime in
    *  the neighborhood of 100.
    **/
@@ -56,23 +83,24 @@ public class HashTableChained implements Dictionary {
   }
 
   /**
-   *  Converts a hash code in the range Integer.MIN_VALUE...Integer.MAX_VALUE
+   *  Converts (compress) a hash code in the range Integer.MIN_VALUE...Integer.MAX_VALUE
    *  to a value in the range 0...(size of hash table) - 1.
    *
    *  This function should have package protection (so we can test it), and
    *  should be used by insert, find, and remove.
    **/
 
-  int compFunction(int code) {
+  int compressFunction(int code) {
       // Replace the following line with your solution.
-      code = (7 * code + 13) % nextPrime(numberOfBuckets * 175);
+      //code = (7 * code + 13) % nextPrime(numberOfBuckets * 175);
+      code = (233333 * code + 23333333) % 16908799;
       if (code < 0) {
         code = (code + 16908799)  % 16908799;
       }
       return code % numberOfBuckets;
   }
 
-  /** 
+  /**
    *  Returns the number of entries stored in the dictionary.  Entries with
    *  the same key (or even the same key and value) each still count as
    *  a separate entry.
@@ -80,19 +108,19 @@ public class HashTableChained implements Dictionary {
    **/
 
   public int size() {
-    // Replace the following line with your solution.
-    return numberOfEntrys;
+      // Replace the following line with your solution.
+      return numberOfEntrys;
   }
 
-  /** 
+  /**
    *  Tests if the dictionary is empty.
    *
    *  @return true if the dictionary has no entries; false otherwise.
    **/
 
   public boolean isEmpty() {
-    // Replace the following line with your solution.
-    return numberOfEntrys == 0;
+      // Replace the following line with your solution.
+      return numberOfEntrys == 0;
   }
 
   /**
@@ -114,17 +142,21 @@ public class HashTableChained implements Dictionary {
       entry.key = key;
       entry.value = value;
 
-      int hashTableIndex = compFunction(key.hashCode());
+      int hashTableIndex = compressFunction(key.hashCode());
       if(!bucketsTable[hashTableIndex].isEmpty())
           numCollisions++;
 
       bucketsTable[hashTableIndex].insertBack(entry);
       numberOfEntrys++;
 
+      if (this.getLoadFactor() >= MAX_LOADFACTOR){
+          this.resizeBucketsTable(2);
+      }
+
       return entry;
   }
 
-  /** 
+  /**
    *  Search for an entry with the specified key.  If such an entry is found,
    *  return it; otherwise return null.  If several entries have the specified
    *  key, choose one arbitrarily and return it.
@@ -139,7 +171,7 @@ public class HashTableChained implements Dictionary {
   public Entry find(Object key) {
     // Replace the following line with your solution.
     if(key != null) {
-        int hashTableIndex = compFunction(key.hashCode());
+        int hashTableIndex = compressFunction(key.hashCode());
         if (bucketsTable[hashTableIndex].isEmpty())
           return null;
 
@@ -161,7 +193,7 @@ public class HashTableChained implements Dictionary {
     return null;
   }
 
-  /** 
+  /**
    *  Remove an entry with the specified key.  If such an entry is found,
    *  remove it from the table and return it; otherwise return null.
    *  If several entries have the specified key, choose one arbitrarily, then
@@ -176,14 +208,15 @@ public class HashTableChained implements Dictionary {
 
   public Entry remove(Object key) {
       // Replace the following line with your solution.
-      if(key != null) {
-        int hashTableIndex = compFunction(key.hashCode());
-        if (bucketsTable[hashTableIndex].isEmpty())
-            return null;
+      if (isEmpty() || key == null)     return null;
 
-        ListNode entryNode = bucketsTable[hashTableIndex].front();
-        while(entryNode.isValidNode())  {
-            try {
+      int hashTableIndex = compressFunction(key.hashCode());
+      if (bucketsTable[hashTableIndex].isEmpty())
+          return null;
+
+      ListNode entryNode = bucketsTable[hashTableIndex].front();
+      while(entryNode.isValidNode())  {
+          try {
               if (entryNode.item() instanceof Entry)  {
                   Entry entry = (Entry)entryNode.item();
                   if (key.equals(entry.key()))  {
@@ -192,6 +225,9 @@ public class HashTableChained implements Dictionary {
                       if(bucketsTable[hashTableIndex].isEmpty())
                           numCollisions--;
 
+                      if (this.getLoadFactor() <= MIN_LOADFACTOR){
+                          this.resizeBucketsTable(0.5f);
+                      }
                       return entry;
                   }
                   else  entryNode = entryNode.next();
@@ -200,8 +236,8 @@ public class HashTableChained implements Dictionary {
           }catch  (InvalidNodeException e)  {
               System.err.println("public Entry find(Object key): " + e);
           }
-        }
       }
+
       return null;
   }
 

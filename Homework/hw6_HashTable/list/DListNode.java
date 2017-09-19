@@ -35,20 +35,6 @@ public class DListNode extends ListNode {
   }
 
   /**
-   *  isValidNode returns true if this node is valid; false otherwise.
-   *  An invalid node is represented by a `myList' field with the value null.
-   *  Sentinel nodes are invalid, and nodes that don't belong to a list are
-   *  also invalid.
-   *
-   *  @return true if this node is valid; false otherwise.
-   *
-   *  Performance:  runs in O(1) time.
-   */
-  public boolean isValidNode() {
-    return myList != null;
-  }
-
-  /**
    *  next() returns the node following this node.  If this node is invalid,
    *  throws an exception.
    *
