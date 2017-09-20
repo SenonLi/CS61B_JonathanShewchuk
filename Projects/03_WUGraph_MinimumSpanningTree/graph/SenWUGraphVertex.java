@@ -8,19 +8,25 @@ public class SenWUGraphVertex {
 
 	/** Use the application visible vertex Object to be HashKey for internal SenWUGraphVertex */
 	private     Object      vertexHashKey;      // for locating in verticesHashTable
-	private     ListNode    listNodeAddress;    // for locating in verticesList
-	protected   DList       adjacencyList;
+	private     ListNode    vertListNode;       // for locating in verticesList
+	private     int         degree;
+	protected   DList       adjacencyEdgeList;
+
 
 	SenWUGraphVertex(Object appVertexHashKey) {
-		listNodeAddress = null;
-		vertexHashKey = appVertexHashKey;
-		adjacencyList = new DList();
+		vertexHashKey       = appVertexHashKey;
+		vertListNode        = null;
+		adjacencyEdgeList   = new DList();
+		degree              = 0;
 	}
 
-	public void setListNodeAddress(ListNode node)   {
-		listNodeAddress = node;
+	void setListNodeAddress(ListNode node)   {
+		vertListNode = node;
 	}
 
-	public Object getVertexHashKey()    { return vertexHashKey; }
-
+	ListNode getVertListNode()  {   return vertListNode;  }
+	Object getVertexHashKey()   {   return vertexHashKey; }
+	int getDegree()             {   return degree;  }
+	void degreeIncrease()       {   degree++;   }
+	void degreeDecrease()       {   degree--;   }
 }
