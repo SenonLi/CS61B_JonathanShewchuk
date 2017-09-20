@@ -46,7 +46,7 @@ public class HashTableChained implements Dictionary {
             for (int i = 0; i < oldNumBuckets; i++) {
                 List bucketList = oldBucketsTable[i];
                 ListNode currNode = bucketList.front();
-                while (currNode != null) {
+                while (currNode.isValidNode()) {
                     this.insert(((Entry) currNode.item()).key(), ((Entry) currNode.item()).value());
                     currNode = currNode.next();
                 }
