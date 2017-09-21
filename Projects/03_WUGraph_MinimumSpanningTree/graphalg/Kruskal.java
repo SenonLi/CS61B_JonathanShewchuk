@@ -7,7 +7,7 @@ import binaryTree.*;
 import set.*;
 
 import hashTable.*;
-import linkedQueue.*;
+
 /**
  * The Kruskal class contains the method minSpanTree(), which implements
  * Kruskal's algorithm for computing a minimum spanning tree of a graph.
@@ -36,15 +36,14 @@ public class Kruskal {
               SenKruskalEdge edge = new SenKruskalEdge(vertHashKeysArray[i],
                                             vertHashKeyNeighbors.neighborList[j],
                                             vertHashKeyNeighbors.weightList[j]);
-              edgeBinaryTree.insertValueUnique(new Integer(edge.weight), edge);
+              edgeBinaryTree.insertValueUnique(edge, edge);
           }
 
       }
 //////////////////////////////////////////////////////////////////////////////
 
       SenBinaryTreeBookmark edgeTreeBookmark = new SenBinaryTreeBookmark(edgeBinaryTree.getLeftestTreeNode());
-
-      System.out.println(edgeBinaryTree);
+      //System.out.println(edgeBinaryTree);
 
       /********* Just for test for now ***************/
       DisjointSets st = new DisjointSets(g.vertexCount());
@@ -60,7 +59,7 @@ public class Kruskal {
 
           try{
               edge = (SenKruskalEdge)edgeTreeBookmark.nextAscend();
-              //System.out.println(edge.weight);
+              System.out.println("Ascending  Edge Weight:\t" + edge.weight);
           }catch(Exception e)   {
               System.err.println("edgeTreeBookmark.nextAscend() " + e.toString());
           }

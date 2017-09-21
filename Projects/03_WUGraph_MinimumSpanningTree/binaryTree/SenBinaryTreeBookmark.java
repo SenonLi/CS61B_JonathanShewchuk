@@ -2,8 +2,6 @@
 
 package binaryTree;
 
-import java.util.NoSuchElementException;
-
 public class SenBinaryTreeBookmark  {
 
   /**
@@ -36,7 +34,7 @@ public class SenBinaryTreeBookmark  {
   public Object nextAscend() throws Exception{
       if (currRunNode == null)  return null;
       if (!currRunNode.isValidTreeNode())
-          throw new Exception("Error invalid currRunNode!! this node doesn't belong to a Tree ! ");
+          throw new Exception("005 Error invalid currRunNode!! this node doesn't belong to a Tree ! ");
 
       Entry currEntry = currRunNode.entry;
       /** point to the null if currRunNode already the rightest */
@@ -51,12 +49,12 @@ public class SenBinaryTreeBookmark  {
           while (currRunNode.leftChild != null)   currRunNode = currRunNode.leftChild;
       }else {
           if (currRunNode.parent == null)
-              throw new Exception("Error rightestNode!! Cannot find a larger Node! ");
+              throw new Exception("003 Error rightestNode!! Cannot find a larger Node! ");
           /** Re-assign currRunNode its predecessor that on its righter */
           currRunNode = currRunNode.parent;
           while ( ((Comparable)currRunNode.entry.key()).compareTo(currEntry.key()) < 0) {
-              if (currRunNode.parent.parent == null)
-                  throw new Exception("Error rightestNode!! Cannot find a larger Node! ");
+              if (currRunNode.parent == null)
+                  throw new Exception("004 Error rightestNode!! Cannot find a larger Node! ");
               currRunNode = currRunNode.parent;
           }
       }
@@ -81,12 +79,12 @@ public class SenBinaryTreeBookmark  {
           while (currRunNode.rightChild != null)   currRunNode = currRunNode.rightChild;
       }else {
           if (currRunNode.parent == null)
-              throw new Exception("Error leftestNode!! Cannot find a smaller Node! ");
+              throw new Exception("001 Error leftestNode!! Cannot find a smaller Node! ");
           /** Re-assign currRunNode its predecessor that on its righter */
           currRunNode = currRunNode.parent;
           while ( ((Comparable)currRunNode.entry.key()).compareTo(currEntry.key()) > 0) {
-              if (currRunNode.parent.parent == null)
-                  throw new Exception("Error leftestNode!! Cannot find a smaller Node! ");
+              if (currRunNode.parent == null)
+                  throw new Exception("002 Error leftestNode!! Cannot find a smaller Node! ");
               currRunNode = currRunNode.parent;
           }
       }

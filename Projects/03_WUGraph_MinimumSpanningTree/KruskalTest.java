@@ -6,12 +6,15 @@
 
 import graph.*;
 import graphalg.*;
+import linkedQueue.*;
+
 import java.util.*;
+import java.util.Timer;
 
 public class KruskalTest {
 
-  private static final int VERTICES = 10;
-  private static final int MAXINT = 100;
+  private static final int VERTICES = 15;
+  private static final int MAXINT = 1000;
 
   private static boolean tree = true;
   private static boolean minTree = true;
@@ -83,7 +86,7 @@ public class KruskalTest {
         return;
       }
     }
-
+/*
   for (i = 0; i < vertArray.length; i++) {
     for (j = 0; j < vertArray.length; j++) {
       System.out.print(" " + maxOnPath[i][j]);
@@ -124,6 +127,7 @@ public class KruskalTest {
 
     addRandomEdges(g, vertArray);
 
+/*
     for (i = 0; i < vertArray.length; i++) {
       for (j = 0; j < vertArray.length; j++) {
         if (g.isEdge(vertArray[i], vertArray[j])) {
@@ -138,6 +142,18 @@ public class KruskalTest {
     System.out.println("Finding the minimum spanning tree.");
     t = Kruskal.minSpanTree(g);
 
+    linkedQueue.Timer stopWatch = new linkedQueue.Timer();
+    stopWatch.start();
+
+    for (int k=0; i<0; i++)  {
+      t = Kruskal.minSpanTree(g);
+    }
+
+    stopWatch.stop();
+    System.out.println("\nKruskal.minSpanTree " +
+        stopWatch.elapsed() + " msec.\n");
+
+/*
     for (i = 0; i < vertArray.length; i++) {
       for (j = 0; j < vertArray.length; j++) {
         if (t.isEdge(vertArray[i], vertArray[j])) {

@@ -43,4 +43,8 @@ public class SenKruskalEdge implements Comparable {
 			return false;
 		}
 	}
+
+	public String toString() {
+		return (new Integer(this.weight)).toString();
+	}
 }
