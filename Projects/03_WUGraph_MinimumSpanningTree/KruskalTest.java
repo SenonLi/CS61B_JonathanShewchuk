@@ -84,12 +84,12 @@ public class KruskalTest {
       }
     }
 
-//  for (i = 0; i < vertArray.length; i++) {
-//    for (j = 0; j < vertArray.length; j++) {
-//      System.out.print(" " + maxOnPath[i][j]);
-//    }
-//    System.out.println();
-//  }
+  for (i = 0; i < vertArray.length; i++) {
+    for (j = 0; j < vertArray.length; j++) {
+      System.out.print(" " + maxOnPath[i][j]);
+    }
+    System.out.println();
+  }//*/
 
     for (i = 0; i < VERTICES; i++) {
       neigh = g.getNeighbors(vertArray[i]);

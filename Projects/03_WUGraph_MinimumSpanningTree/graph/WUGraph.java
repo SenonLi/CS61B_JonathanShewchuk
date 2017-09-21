@@ -2,7 +2,7 @@
 
 package graph;
 import list.*;
-import dict.*;
+import hashTable.*;
 /**
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
  * permitted.

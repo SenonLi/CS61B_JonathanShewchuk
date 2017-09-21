@@ -1,6 +1,6 @@
 /* Entry.java */
 
-package dict;
+package hashTable;
 
 /**
  *  A class for dictionary entries.

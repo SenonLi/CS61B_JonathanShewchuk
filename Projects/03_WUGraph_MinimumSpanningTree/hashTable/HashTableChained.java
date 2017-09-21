@@ -1,6 +1,6 @@
 /* HashTableChained.java */
 
-package dict;
+package hashTable;
 
 import list.*;
 

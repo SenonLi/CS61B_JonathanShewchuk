@@ -19,4 +19,28 @@ public class SenKruskalEdge implements Comparable {
 		else if (weight > ((SenKruskalEdge)o).weight)	return 1;
 		else                                            return 0;
 	}
+
+	public int hashCode() {
+		if (uVertHashKey.equals(vVertHashKey)) {
+			return uVertHashKey.hashCode() + 1;
+		} else {
+			return uVertHashKey.hashCode() + vVertHashKey.hashCode();
+		}
+	}
+
+	/**
+	 * equals() returns true if this SenKruskalEdge represents the same unordered
+	 * pair of objects as the parameter "o".  The order of the pair does not
+	 * affect the equality test, so (u, v) is found to be equal to (v, u).
+	 */
+	public boolean equals(Object o) {
+		if (o instanceof SenKruskalEdge) {
+			return ((uVertHashKey.equals(((SenKruskalEdge) o).uVertHashKey)) &&
+				(vVertHashKey.equals(((SenKruskalEdge) o).vVertHashKey))) ||
+				((uVertHashKey.equals(((SenKruskalEdge) o).vVertHashKey)) &&
+					(vVertHashKey.equals(((SenKruskalEdge) o).uVertHashKey)));
+		} else {
+			return false;
+		}
+	}
 }

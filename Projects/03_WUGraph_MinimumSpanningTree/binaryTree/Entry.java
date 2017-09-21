@@ -1,6 +1,6 @@
 /* Entry.java */
 
-package dict;
+package binaryTree;
 
 /**
  *  A class for dictionary entries, which are (key, value) pairs.
@@ -11,8 +11,8 @@ package dict;
 
 public class Entry {
 
-  protected Object key;
-  protected Object value;
+  private Object key;
+  private Object value;
 
   protected Entry(Object k, Object v) {
     key = k;

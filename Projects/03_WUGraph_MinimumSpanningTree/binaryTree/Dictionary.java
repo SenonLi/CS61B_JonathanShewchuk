@@ -1,6 +1,6 @@
 /* Dictionary.java */
 
-package dict;
+package binaryTree;
 
 /**
  *  An interface for (unordered) dictionary ADTs.
