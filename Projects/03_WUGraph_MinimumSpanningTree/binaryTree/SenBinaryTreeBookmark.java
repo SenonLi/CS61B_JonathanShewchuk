@@ -30,13 +30,15 @@ public class SenBinaryTreeBookmark  {
    */
   public boolean hasNext() {
       // Replace the following line with your solution.
-      return currRunNode != null ; // Attention: not currRunNode.next != null
+      return currRunNode != null && currRunNode.isValidTreeNode(); // Attention: not currRunNode.next != null
   }
 
   public Object nextAscend() throws Exception{
       if (currRunNode == null)  return null;
-      Entry currEntry = currRunNode.entry;
+      if (!currRunNode.isValidTreeNode())
+          throw new Exception("Error invalid currRunNode!! this node doesn't belong to a Tree ! ");
 
+      Entry currEntry = currRunNode.entry;
       /** point to the null if currRunNode already the rightest */
       if (currRunNode == currRunNode.myTree.getRightestTreeNode())  {
           currRunNode = null;
@@ -63,8 +65,10 @@ public class SenBinaryTreeBookmark  {
 
   public Object nextDescend() throws Exception {
       if (currRunNode == null)  return null;
-      Entry currEntry = currRunNode.entry;
+      if (!currRunNode.isValidTreeNode())
+          throw new Exception("Error invalid currRunNode!! this node doesn't belong to a Tree ! ");
 
+      Entry currEntry = currRunNode.entry;
       /** point to the null if currRunNode already the leftest */
       if (currRunNode == currRunNode.myTree.getLeftestTreeNode())  {
           currRunNode = null;
