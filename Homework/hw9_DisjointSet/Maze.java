@@ -77,7 +77,13 @@ public class Maze {
      * integer.  randInt() generates different numbers every time the program
      * is run, so that you can make lots of different mazes.
      **/
-
+    DisjointSets st = new DisjointSets(horiz * vert);
+    int numberOfHWalls = horiz * (vert - 1);
+    int numberOfVWalls = vert * (horiz - 1);
+    int[] walls = new int[numberOfHWalls + numberOfVWalls];
+    for (i = 0; i < numberOfHWalls; i++) {
+      walls[i] = i + 1;
+    }
 
 
   }
