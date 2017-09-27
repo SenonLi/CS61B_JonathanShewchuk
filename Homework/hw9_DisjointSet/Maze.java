@@ -313,8 +313,8 @@ public class Maze {
    * the maze, and runs the diagnostic method to see if the maze is good.
    */
   public static void main(String[] args) {
-    int x = 3;
-    int y = 3;
+    int x = 30;
+    int y = 10;
 
     /**
      *  Read the input parameters.
