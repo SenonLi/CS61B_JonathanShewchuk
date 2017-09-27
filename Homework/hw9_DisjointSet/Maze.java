@@ -66,25 +66,65 @@ public class Maze {
     }
 
 
+      /**
+       * Fill in the rest of this method.  You should go through all the walls of
+       * the maze in random order, and remove any wall whose removal will not
+       * create a cycle.  Use the implementation of disjoint sets provided in the
+       * set package to avoid creating any cycles.
+       *
+       * Note the method randInt() further below, which generates a random
+       * integer.  randInt() generates different numbers every time the program
+       * is run, so that you can make lots of different mazes.
+       **/
 
-    /**
-     * Fill in the rest of this method.  You should go through all the walls of
-     * the maze in random order, and remove any wall whose removal will not
-     * create a cycle.  Use the implementation of disjoint sets provided in the
-     * set package to avoid creating any cycles.
-     *
-     * Note the method randInt() further below, which generates a random
-     * integer.  randInt() generates different numbers every time the program
-     * is run, so that you can make lots of different mazes.
-     **/
-    DisjointSets st = new DisjointSets(horiz * vert);
-    int numberOfHWalls = horiz * (vert - 1);
-    int numberOfVWalls = vert * (horiz - 1);
-    int[] walls = new int[numberOfHWalls + numberOfVWalls];
-    for (i = 0; i < numberOfHWalls; i++) {
-      walls[i] = i + 1;
-    }
+      /** (1) */
+      DisjointSets st = new DisjointSets(horiz * vert);
+      /** (2) */
+      int numberOfHWalls = horiz * (vert - 1);
+      int numberOfVWalls = vert * (horiz - 1);
+      int[] walls = new int[numberOfHWalls + numberOfVWalls];
+      for (i = 0; i < numberOfHWalls; i++) {
+          walls[i] = i + 1;
+      }
+      int vindex = 0;
+      for (i = numberOfHWalls; i < numberOfHWalls + numberOfVWalls; i++) {
+          walls[i] = -vindex;
+          vindex = vindex + 1;
+      }
 
+      for (i = numberOfHWalls + numberOfVWalls; i > 0; i--) {
+          int index = randInt(i);
+          int tmp = walls[i - 1];
+          walls[i - 1] = walls[index];
+          walls[index] = tmp;
+      }
+      /** (3) */
+      for (i = 0; i < numberOfHWalls + numberOfVWalls; i++) {
+          int w = walls[i];
+          if (w > 0) {
+              int topX = (w - 1) / (vert - 1);
+              int topY = (w - 1) % (vert - 1);
+              int downX = topX;
+              int downY = topY + 1;
+              int topCell = topX + topY * horiz;
+              int downCell = downX + downY * horiz;
+              if (st.find(topCell) != st.find(downCell)) {
+                  hWalls[topX][topY] = false;
+                  st.union(st.find(topCell), st.find(downCell));
+              }
+          } else {
+              int leftX = (-w) % (horiz - 1);
+              int leftY = (-w) / (horiz - 1);
+              int rightX = leftX + 1;
+              int rightY = leftY;
+              int leftCell = leftX + leftY * horiz;
+              int rightCell = rightX + rightY * horiz;
+              if (st.find(leftCell) != st.find(rightCell)) {
+                  vWalls[leftX][leftY] = false;
+                  st.union(st.find(leftCell), st.find(rightCell));
+              }
+          }
+      }
 
   }
 
@@ -273,8 +313,8 @@ public class Maze {
    * the maze, and runs the diagnostic method to see if the maze is good.
    */
   public static void main(String[] args) {
-    int x = 39;
-    int y = 15;
+    int x = 3;
+    int y = 3;
 
     /**
      *  Read the input parameters.
