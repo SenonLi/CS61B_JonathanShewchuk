@@ -14,7 +14,7 @@ import java.util.Timer;
 public class KruskalTest {
 
   private static final int VERTICES = 15;
-  private static final int MAXINT = 1000;
+  private static final int MAXINT = 100;
 
   private static boolean tree = true;
   private static boolean minTree = true;
@@ -100,6 +100,12 @@ public class KruskalTest {
         for (j = 0; j < neigh.neighborList.length; j++) {
           int v = ((DFSVertex) neigh.neighborList[j]).number;
           if (neigh.weightList[j] < maxOnPath[i][v]) {
+            /** The way to test Kruskal's MinSpanTree:
+             *  start to make edge valid from the lest weight and make sure no loop,
+             *  only single path between very two vertices means, in all the final valid edges,
+             *  no edge on a path between two vertices can be larger than
+             *  the weight of direct edge (include the invalid one) between those two vertices;
+             *  otherwise the valid edge was falsely chosen, failed to be minTree */
             minTree = false;
           }
         }

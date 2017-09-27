@@ -5,7 +5,6 @@ package graphalg;
 import graph.*;
 import binaryTree.*;
 import set.*;
-
 import hashTable.*;
 
 /**
@@ -40,34 +39,34 @@ public class Kruskal {
           }
 
       }
-//////////////////////////////////////////////////////////////////////////////
 
       SenBinaryTreeBookmark edgeTreeBookmark = new SenBinaryTreeBookmark(edgeBinaryTree.getLeftestTreeNode());
       //System.out.println(edgeBinaryTree);
 
-      /********* Just for test for now ***************/
-      DisjointSets st = new DisjointSets(g.vertexCount());
-      HashTableChained vertexHash = new HashTableChained();
+      /** DisjointSets can help easily tell if two vertices are already connected (in the same set)
+       *  HashTableChained is for building the disjointSets' code mapped from very single vertex */
+      DisjointSets vertsConnectionTellerDS = new DisjointSets(g.vertexCount());
+      HashTableChained vertToDSCodeHashTable = new HashTableChained();
       for (int i = 0; i < vertHashKeysArray.length; ++i) {
-          vertexHash.insert(vertHashKeysArray[i], i);
+          vertToDSCodeHashTable.insert(vertHashKeysArray[i], i);
       }
       int count = 0;
+      SenKruskalEdge edge = null;
 
       while(edgeTreeBookmark.hasNext()) {
           count++;
-          SenKruskalEdge edge = null;
 
           try{
               edge = (SenKruskalEdge)edgeTreeBookmark.nextAscend();
-              System.out.println("Ascending  Edge Weight:\t" + edge.weight);
+              //System.out.println("Ascending  Edge Weight:\t" + edge.weight);
           }catch(Exception e)   {
               System.err.println("edgeTreeBookmark.nextAscend() " + e.toString());
           }
 
-          int st1 = st.find((Integer)(vertexHash.find(edge.uVertHashKey)).value());
-          int st2 = st.find((Integer)(vertexHash.find(edge.vVertHashKey)).value());
+          int st1 = vertsConnectionTellerDS.find((Integer)(vertToDSCodeHashTable.find(edge.uVertHashKey)).value());
+          int st2 = vertsConnectionTellerDS.find((Integer)(vertToDSCodeHashTable.find(edge.vVertHashKey)).value());
           if (st1 != st2) {
-              st.union(st1, st2);
+              vertsConnectionTellerDS.union(st1, st2);
               mstGraph.addEdge(edge.uVertHashKey, edge.vVertHashKey, edge.weight);
           }
       }//*/
